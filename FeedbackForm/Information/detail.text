@@ -1,0 +1,41 @@
+﻿1. Create Generic Repository Pattern (Optional but recommended)
+2. Create Service Layer
+3. Create DTOs (Data Transfer Objects)
+4. Create AutoMapper Profile
+5. Build the API Controllers
+6. Add Exception Handling Middleware
+7. Add Filters (Optional)
+8. Register Dependencies
+9. Create and Apply Migrations
+
+
+
+✅ Best Practice
+Use GenericRepository<T> for basic operations (GetById, Add, Update, Remove).
+
+For custom logic like:
+
+Getting a form with nested questions/options
+
+Submitting form with multiple levels of answers
+
+Aggregating data (like total submissions)
+
+👉 Use the service layer or create specific repositories like FormRepository, SubmissionRepository.
+
+
+
+
+
+⚠️ What It Does Not Automatically Handle
+Generic repositories are intentionally generic, meaning:
+
+No custom queries out-of-the-box (e.g., GetAllFormsWithSubmissions) – you implement those in:
+
+a custom repository (e.g., IFormRepository)
+
+or a service layer
+
+Complex joins or eager loading (e.g., Include(q => q.Options)) need to be handled explicitly.
+
+
