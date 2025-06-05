@@ -62,9 +62,57 @@ public class FormsController : ControllerBase
     public async Task<IActionResult> GetFormById(Guid id)
     {
         var form = await _formService.GetFormByIdAsync(id);
-        if (form == null) return NotFound();
-        return Ok(form);
+        if (form == null)
+            return NotFound();
+
+        var dto = new FormDetailGetByIdDto
+        {
+            Id = form.Id,
+            Title = form.Title,
+            Description = form.Description,
+            Status = form.Status.ToString(),
+            ShareableLink = form.Status == FormStatus.Published ? form.ShareableLink : null,
+            CreatedOn = form.CreatedOn,
+            PublishedOn = form.PublishedOn,
+            ClosedOn = form.ClosedOn,
+            UserId = form.UserId,
+            Questions = form.Questions.Select(q => new QuestionDto
+            {
+                Id = q.Id,
+                FormId = q.FormId,
+                Text = q.Text,
+                Type = q.Type,
+                WordLimit = q.WordLimit,
+                IsRequired = q.IsRequired,
+                Order = q.Order,
+                Options = q.Options.Select(o => new OptionDto
+                {
+                    Id = o.Id,
+                    QuestionId = o.QuestionId,
+                    Text = o.Text,
+                    Value = o.Value,
+                    Order = o.Order
+                }).ToList()
+            }).ToList(),
+            Submissions = form.Submissions.Select(s => new SubmissionDto
+            {
+                Id = s.Id,
+                //FormId = s.FormId,
+                SubmittedOn = s.SubmittedOn,
+                RespondentId = s.RespondentId,
+                Answers = s.Answers.Select(a => new AnswerDto
+                {
+                    Id = a.Id,
+                    QuestionId = a.QuestionId,
+                    //OptId = a.OptId,
+                    TextAnswer = a.TextAnswer
+                }).ToList()
+            }).ToList()
+        };
+
+        return Ok(dto);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> GetAllForms()
