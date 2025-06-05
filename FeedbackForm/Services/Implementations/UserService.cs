@@ -19,7 +19,7 @@ namespace FeedbackForm.Services.Implementations
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _userRepository.GetQueryable()
-            .Include(u => u.Forms)
+            //.Include(u => u.Forms)
             .ToListAsync();
         }
 

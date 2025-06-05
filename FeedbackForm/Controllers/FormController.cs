@@ -17,8 +17,7 @@ public class FormsController : ControllerBase
         _userService = userService;
     }
 
-    [HttpPost]
-    [HttpPost]
+   
     [HttpPost]
     public async Task<IActionResult> CreateForm([FromBody] CreateFormRequestDto request)
     {
@@ -76,7 +75,7 @@ public class FormsController : ControllerBase
         return Ok(forms);
     }
 
-    [HttpPost("{id}/status")]
+    [HttpPut("{id}/status")]
     public async Task<IActionResult> UpdateFormStatus(Guid id, [FromQuery] FormStatus status)
     {
         bool result = false;

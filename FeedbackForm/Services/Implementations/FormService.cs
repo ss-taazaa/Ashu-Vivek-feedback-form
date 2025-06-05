@@ -2,10 +2,6 @@
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace FeedbackForm.Services.Implementations
 {
@@ -32,38 +28,16 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
 
-        //public async Task<Form> GetFormByIdAsync(Guid formId)
-        //{
-        //    return await _formRepo.GetByIdAsync(formId,
-        //        f => f.Questions,
-        //        f => f.Submissions);
-        //}
-
-
-
-
         public async Task<Form> GetFormByIdAsync(Guid formId)
-
         {
-
             return await _formRepo.GetSingleAsync(
-
               predicate: f => f.Id == formId,
-
               include: f => f
-
                 .Include(f => f.Questions)
-
                   .ThenInclude(q => q.Options)
-
                 .Include(f => f.Submissions)
-
             );
-
         }
-
-        //Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
-
         public async Task<IEnumerable<Form>> GetAllFormsAsync()
         {
             return await _formRepo.GetAllAsync(
