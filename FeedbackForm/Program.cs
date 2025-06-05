@@ -22,9 +22,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IFormService, FormService>();
-builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IFormService, FormService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IResponseService, ResponseService>();
+
 
 builder.Services.AddCors(options =>
 {

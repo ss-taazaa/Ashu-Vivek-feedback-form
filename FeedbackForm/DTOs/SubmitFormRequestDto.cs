@@ -1,11 +1,18 @@
-﻿namespace FeedbackForm.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+public class SubmitFormRequestDto
 {
-    public class SubmitFormRequestDto
-    {
-        public string ShareableLink { get; set; }
-        public string RespondentId { get; set; }
-        public string RespondentName { get; set; }
-        public string RespondentEmail { get; set; }
-        public List<AnswerDto> Answers { get; set; }
-    }
+    [Required]
+    public string ShareableLink { get; set; } = null!;
+
+    [Required]
+    public string RespondentName { get; set; } = null!;
+
+    [Required]
+    [EmailAddress]
+    public string RespondentEmail { get; set; } = null!;
+
+    [Required]
+    [MinLength(1, ErrorMessage = "At least one answer is required.")]
+    public List<AnswerDto> Answers { get; set; } = new List<AnswerDto>();
 }
