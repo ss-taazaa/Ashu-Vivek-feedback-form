@@ -147,6 +147,19 @@ namespace FeedbackForm.Repositories.Implementations
             return _context.Set<T>();
         }
 
+        public async Task<T?> GetSingleAsync(
+                Expression<Func<T, bool>> predicate,
+                Func<IQueryable<T>, IQueryable<T>>? include = null)
+                {
+                    IQueryable<T> query = _dbSet;
+
+                    if (include != null)
+                    query = include(query);
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+
 
 
     }

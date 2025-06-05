@@ -29,6 +29,7 @@ namespace FeedbackForm
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IFormService, FormService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IResponseService, ResponseService>();
 
             builder.Services.AddControllers()
     .AddJsonOptions(x =>

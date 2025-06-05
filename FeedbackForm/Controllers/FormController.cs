@@ -35,7 +35,7 @@ public class FormsController : ControllerBase
             Description = request.Description,
             Status = request.Status,
             CreatedOn = DateTime.UtcNow,
-            UserId = request.UserId, // ✅ FK only
+            UserId = request.UserId,
             ShareableLink = Guid.NewGuid().ToString(),
             Questions = request.Questions?.Select(q => new Question
             {

@@ -1,6 +1,7 @@
 ﻿using FeedbackForm.Models;
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -31,13 +32,35 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
 
-        public async Task<Form> GetFormByIdAsync(Guid formId)
-        {
-            return await _formRepo.GetByIdAsync(formId,
-                f => f.Questions,
-                f => f.Submissions);
-        }
+        //public async Task<Form> GetFormByIdAsync(Guid formId)
+        //{
+        //    return await _formRepo.GetByIdAsync(formId,
+        //        f => f.Questions,
+        //        f => f.Submissions);
+        //}
 
+
+
+
+        public async Task<Form> GetFormByIdAsync(Guid formId)
+
+        {
+
+            return await _formRepo.GetSingleAsync(
+
+              predicate: f => f.Id == formId,
+
+              include: f => f
+
+                .Include(f => f.Questions)
+
+                  .ThenInclude(q => q.Options)
+
+                .Include(f => f.Submissions)
+
+            );
+
+        }
 
         //Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
 
@@ -62,7 +85,7 @@ namespace FeedbackForm.Services.Implementations
 
             form.Status = FormStatus.Published;
             form.PublishedOn = DateTime.UtcNow;
-            form.ShareableLink = $"https://yourdomain.com/forms/{formId}";
+            form.ShareableLink = $"http://localhost:5047/api/forms/{form.Id}";
 
             await _formRepo.UpdateAsync(form);
             return true;

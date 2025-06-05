@@ -2,9 +2,6 @@
 {
     public class AnswerOptionDto
     {
-        public Guid Id { get; set; }
-        public Guid AnswerId { get; set; }
-        public Guid OptId { get; set; }
-        public int Rank { get; set; }
+        public Guid OptionId { get; set; }
     }
 }

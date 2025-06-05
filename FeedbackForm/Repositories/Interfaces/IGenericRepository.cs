@@ -26,6 +26,9 @@ namespace FeedbackForm.Repositories.Interfaces
         
         Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions);
         IQueryable<T> GetQueryable();
-
+        Task<T?> GetSingleAsync(
+            Expression<Func<T, bool>> predicate,
+            Func<IQueryable<T>, IQueryable<T>>? include = null);
+       
     }
 }
