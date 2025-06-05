@@ -2,9 +2,6 @@
 using FeedbackForm.Models;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FeedbackForm.Controllers
 {
@@ -19,7 +16,7 @@ namespace FeedbackForm.Controllers
             _userService = userService;
         }
 
-       
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
@@ -27,7 +24,7 @@ namespace FeedbackForm.Controllers
             return Ok(users);
         }
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserById(Guid id)
         {
@@ -60,7 +57,7 @@ namespace FeedbackForm.Controllers
                 Name = user.Name,
                 Email = user.Email,
                 CreatedOn = user.CreatedOn,
-                FormIds = new List<Guid>() 
+                FormIds = new List<Guid>()
             };
 
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, responseDto);
