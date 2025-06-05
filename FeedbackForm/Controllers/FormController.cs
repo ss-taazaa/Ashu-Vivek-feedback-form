@@ -1,6 +1,5 @@
 ﻿using FeedbackForm.DTOs;
 using FeedbackForm.Models;
-using FeedbackForm.Services.Implementations;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +16,14 @@ public class FormsController : ControllerBase
         _userService = userService;
     }
 
+<<<<<<< HEAD
    
+=======
+>>>>>>> f76708e4a2fe714f50c934da197d8353f2a3a727
     [HttpPost]
     public async Task<IActionResult> CreateForm([FromBody] CreateFormRequestDto request)
     {
-        // Step 1: Validate if user exists
+
         var user = await _userService.GetUserById(request.UserId);
         if (user == null)
             return NotFound($"User with ID {request.UserId} not found.");
@@ -72,7 +74,22 @@ public class FormsController : ControllerBase
     public async Task<IActionResult> GetAllForms()
     {
         var forms = await _formService.GetAllFormsAsync();
-        return Ok(forms);
+
+        var result = forms.Select(f => new FormListItemDto
+        {
+            Id = f.Id,
+            Title = f.Title,
+            Description = f.Description,
+            Status = f.Status.ToString(),
+            ShareableLink = f.Status == FormStatus.Published ? f.ShareableLink : null,
+            //SubmissionCount = (f.Status == FormStatus.Published || f.Status == FormStatus.Closed) ? f.Submissions?.Count ?? 0 : 0,
+            PublishedOn = f.PublishedOn,
+            ClosedOn = f.ClosedOn,
+            CanEdit = f.Status == FormStatus.Draft,
+            CanClose = f.Status == FormStatus.Published
+        });
+
+        return Ok(result);
     }
 
     [HttpPut("{id}/status")]
@@ -121,4 +138,8 @@ public class FormsController : ControllerBase
         var result = await _formService.UpdateFormQuestionsAsync(id, questions);
         return result ? Ok("Form questions updated successfully.") : BadRequest("Failed to update form questions.");
     }
+
+
+
+
 }
