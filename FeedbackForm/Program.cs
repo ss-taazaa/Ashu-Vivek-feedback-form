@@ -4,17 +4,17 @@ using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Implementations;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
+//using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.WriteIndented = true;
-    });
+builder.Services.AddControllers();
+    //.AddJsonOptions(options =>
+    //{
+    //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    //    options.JsonSerializerOptions.WriteIndented = true;
+    //});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
