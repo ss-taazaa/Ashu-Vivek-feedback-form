@@ -1,11 +1,21 @@
-﻿namespace FeedbackForm.DTOs
+﻿using FeedbackForm.Models;
+
+namespace FeedbackForm.DTOs
 {
     public class OptionDto
     {
         public Guid Id { get; set; }
-        public Guid QuestionId { get; set; }
         public string Text { get; set; }
-        public int Value { get; set; }
+        public int? Value { get; set; }
         public int Order { get; set; }
+
+        // Add this constructor to map from Option entity/model
+        public OptionDto(Option option)
+        {
+            Id = option.Id;
+            Text = option.Text;
+            Value = option.Value;
+            Order = option.Order;
+        }
     }
 }

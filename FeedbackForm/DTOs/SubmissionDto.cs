@@ -1,11 +1,18 @@
-﻿namespace FeedbackForm.DTOs
+﻿using FeedbackForm.Models;
+
+public class SubmissionDto
 {
-    public class SubmissionDto
+    public Guid Id { get; set; }
+    public string RespondentName { get; set; }
+    public string RespondentEmail { get; set; }
+    public DateTime SubmittedOn { get; set; }
+
+    // Constructor to map from Submission entity/model
+    public SubmissionDto(Submission submission)
     {
-        public Guid Id { get; set; }
-        public Guid FormId { get; set; }
-        public DateTime SubmittedAt { get; set; }
-        public string RespondentId { get; set; }
-        public List<AnswerDto> Answers { get; set; }
+        Id = submission.Id;
+        RespondentName = submission.RespondentName;
+        RespondentEmail = submission.RespondentEmail;
+        SubmittedOn = submission.SubmittedOn;
     }
 }

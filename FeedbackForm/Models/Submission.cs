@@ -10,8 +10,8 @@ namespace FeedbackForm.Models
 
         public DateTime SubmittedOn { get; set; }
 
-        public string RespondentName { get; set; }         // Replaces RespondentId
-        public string RespondentEmail { get; set; }        // Replaces RespondentId
+        public string RespondentName { get; set; }         
+        public string RespondentEmail { get; set; }        
 
         public ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
@@ -24,5 +24,41 @@ namespace FeedbackForm.Models
             RespondentName = respondentName;
             RespondentEmail = respondentEmail;
         }
+
+        public Submission(SubmitFormRequestDto dto, Guid formId)
+        {
+            Id = Guid.NewGuid();
+            FormId = formId;
+            RespondentName = dto.RespondentName;
+            RespondentEmail = dto.RespondentEmail;
+            SubmittedOn = DateTime.UtcNow;
+            Answers = dto.Answers.Select(dtoAnswer =>
+            {
+                var answer = new Answer
+                {
+                    Id = Guid.NewGuid(),
+                    QuestionId = dtoAnswer.QuestionId,
+                    SubmissionId = Id,
+                    TextAnswer = dtoAnswer.TextAnswer,
+                    RatingValue = dtoAnswer.RatingValue,
+                    Ranking = dtoAnswer.Ranking,
+                    AnswerOptions = dtoAnswer.AnswerOptions.Select(dtoOpt => new AnswerOption(dtoOpt)
+                    {
+                        AnswerId = Guid.Empty // temp, will fix below
+                    }).ToList()
+                };
+
+                // Fix AnswerId on answer options
+                foreach (var answerOption in answer.AnswerOptions)
+                {
+                    answerOption.AnswerId = answer.Id;
+                }
+
+                return answer;
+            }).ToList();
+        }
+
+
+
     }
 }

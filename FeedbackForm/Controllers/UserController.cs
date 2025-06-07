@@ -41,60 +41,25 @@ namespace FeedbackForm.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var user = new User
-            {
-                Name = userCreateDto.Name,
-                Email = userCreateDto.Email,
-                CreatedOn = DateTime.UtcNow
-            };
-
+            var user = new User(userCreateDto);
             await _userService.CreateUserAsync(user);
-
-            var responseDto = new UserDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                CreatedOn = user.CreatedOn,
-                FormIds = new List<Guid>()
-            };
-
+            var responseDto = new UserDto(user);
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, responseDto);
         }
 
 
-
-
-        // [HttpPut("{id}")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserCreateDto userCreateDto)
         {
             var existingUser = await _userService.GetUserById(id);
             if (existingUser == null)
                 return NotFound();
-
-            // Update allowed fields
             existingUser.Name = userCreateDto.Name;
             existingUser.Email = userCreateDto.Email;
-
             var updatedUser = await _userService.UpdateUserAsync(id, existingUser);
-
-            var responseDto = new UserDto
-            {
-                Id = updatedUser.Id,
-                Name = updatedUser.Name,
-                Email = updatedUser.Email,
-                CreatedOn = updatedUser.CreatedOn,
-                FormIds = updatedUser.Forms?.Select(f => f.Id).ToList() ?? new List<Guid>()
-            };
-
+            var responseDto = new UserDto(updatedUser);
             return Ok(responseDto);
         }
-
-
-
-
 
 
         [HttpDelete("{id}")]
@@ -105,10 +70,8 @@ namespace FeedbackForm.Controllers
             {
                 return NotFound();
             }
-
             return NoContent();
         }
-
 
     }
 }

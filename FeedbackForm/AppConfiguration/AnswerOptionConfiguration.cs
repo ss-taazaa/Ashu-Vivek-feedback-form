@@ -14,11 +14,13 @@ namespace FeedbackForm.AppConfiguration
 
             builder.HasOne(ao => ao.Answer)
                    .WithMany(a => a.AnswerOptions)
-                   .HasForeignKey(ao => ao.AnswerId);
+                   .HasForeignKey(ao => ao.AnswerId)
+                   .OnDelete(DeleteBehavior.Cascade); 
 
             builder.HasOne(ao => ao.Option)
                    .WithMany()
-                   .HasForeignKey(ao => ao.OptId);
+                   .HasForeignKey(ao => ao.OptionId)
+                   .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 }

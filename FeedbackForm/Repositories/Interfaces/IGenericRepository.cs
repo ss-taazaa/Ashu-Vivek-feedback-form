@@ -22,9 +22,9 @@ namespace FeedbackForm.Repositories.Interfaces
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
 
-        Task<Form> AddFormWithQuestionsAsync(Form form, List<Question> questions);
+        //Task<Form> AddFormWithQuestionsAsync(Form form, List<Question> questions);
         
-        Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions);
+        //Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions);
         IQueryable<T> GetQueryable();
         Task<T?> GetSingleAsync(
             Expression<Func<T, bool>> predicate,
