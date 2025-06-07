@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedbackForm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250605065704_response")]
-    partial class response
+    [Migration("20250606122219_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

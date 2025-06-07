@@ -19,15 +19,13 @@ namespace FeedbackForm.Services.Implementations
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _userRepository.GetQueryable()
-            .Include(u => u.Forms)
             .ToListAsync();
         }
 
 
         public async Task<User> GetUserById(Guid id)
         {
-            return await _userRepository.GetQueryable()
-                .Include(u => u.Forms)
+                return await _userRepository.GetQueryable()
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
@@ -40,6 +38,7 @@ namespace FeedbackForm.Services.Implementations
             return await _userRepository.AddAsync(user);
 
         }
+
 
         public async Task<User> UpdateUserAsync(Guid id, User updatedUser)
         {
@@ -67,11 +66,11 @@ namespace FeedbackForm.Services.Implementations
             return true;
         }
 
+
         public async Task<User?> GetUserWithFormsAsync(Guid id)
         {
-            // Use EF's Include to load related forms
             return await _userRepository
-                .GetQueryable() // Custom method in GenericRepository — see below
+                .GetQueryable() 
                 .Include(u => u.Forms)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }

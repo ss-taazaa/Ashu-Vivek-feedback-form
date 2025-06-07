@@ -17,6 +17,7 @@ namespace FeedbackForm.Controllers
         {
             _responseService = responseService;
         }
+
         [HttpPost("submit")]
         public async Task<IActionResult> SubmitForm([FromBody] SubmitFormRequestDto request)
         {
@@ -24,7 +25,6 @@ namespace FeedbackForm.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             try
             {
                 await _responseService.SubmitFormAsync(request);

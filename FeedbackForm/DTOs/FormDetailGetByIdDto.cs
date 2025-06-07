@@ -11,7 +11,6 @@
         public DateTime? PublishedOn { get; set; }
         public DateTime? ClosedOn { get; set; }
         public Guid UserId { get; set; }
-
         public List<QuestionDto> Questions { get; set; } = new();
         public List<SubmissionDto> Submissions { get; set; } = new();
     }

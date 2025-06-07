@@ -12,6 +12,8 @@ namespace FeedbackForm.Services.Implementations
 {
     public class ResponseService : IResponseService
     {
+
+
         private readonly IGenericRepository<Form> _formRepo;
         private readonly IGenericRepository<Submission> _submissionRepo;
 
@@ -23,6 +25,8 @@ namespace FeedbackForm.Services.Implementations
             _submissionRepo = submissionRepo;
         }
 
+
+
         public async Task SubmitFormAsync(SubmitFormRequestDto dto)
         {
             var form = await _formRepo.GetSingleAsync(
@@ -33,42 +37,22 @@ namespace FeedbackForm.Services.Implementations
             if (form == null)
                 throw new Exception("Form not found.");
 
-            var submission = new Submission
-            {
-                Id = Guid.NewGuid(),
-                FormId = form.Id,
-                SubmittedOn = DateTime.UtcNow,
-                RespondentName = dto.RespondentName,
-                RespondentEmail = dto.RespondentEmail,
-                Answers = new List<Answer>()
-            };
+            var validOptionIds = form.Questions
+                .SelectMany(q => q.Options)
+                .Select(o => o.Id)
+                .ToHashSet(); // Use a set for fast lookup
 
-            foreach (var answerDto in dto.Answers)
-            {
-                var answer = new Answer
-                {
-                    Id = Guid.NewGuid(),
-                    QuestionId = answerDto.QuestionId,
-                    SubmissionId = submission.Id,
-                    TextAnswer = answerDto.TextAnswer ?? string.Empty,
-                    RatingValue = answerDto.RatingValue,
-                    Ranking = answerDto.Ranking,
-                    AnswerOptions = new List<AnswerOption>()
-                };
+            var submission = new Submission(dto, form.Id);
 
-                if (answerDto.AnswerOptions != null)
+            foreach (var answer in submission.Answers)
+            {
+                foreach (var answerOption in answer.AnswerOptions)
                 {
-                    foreach (var optionDto in answerDto.AnswerOptions)
-                    {
-                        answer.AnswerOptions.Add(new AnswerOption
-                        {
-                            Id = Guid.NewGuid(),
-                            OptId = optionDto.OptionId
-                        });
-                    }
+                    if (!validOptionIds.Contains(answerOption.OptionId))
+                        throw new Exception($"Invalid Option ID: {answerOption.OptionId}");
+
+                    answerOption.Option = null; // Ensure EF doesn't try to insert new Option
                 }
-
-                submission.Answers.Add(answer);
             }
 
             try
@@ -79,7 +63,11 @@ namespace FeedbackForm.Services.Implementations
             {
                 throw new Exception("Error saving submission: " + ex.InnerException?.Message, ex);
             }
-
         }
+
+
+
+
+
     }
 }

@@ -1,19 +1,16 @@
-﻿using FeedbackForm.Models;
+﻿using FeedbackForm.Enum;
+using FeedbackForm.Models;
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace FeedbackForm.Services.Implementations
 {
     public class FormService : IFormService
     {
-        private readonly IGenericRepository<Form> _formRepo;
+        private readonly IFormRepository _formRepo;
 
-        public FormService(IGenericRepository<Form> formRepo)
+        public FormService(IFormRepository formRepo)
         {
             _formRepo = formRepo;
         }
@@ -32,37 +29,16 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
 
-        //public async Task<Form> GetFormByIdAsync(Guid formId)
-        //{
-        //    return await _formRepo.GetByIdAsync(formId,
-        //        f => f.Questions,
-        //        f => f.Submissions);
-        //}
-
-
-
-
         public async Task<Form> GetFormByIdAsync(Guid formId)
-
         {
-
             return await _formRepo.GetSingleAsync(
-
-              predicate: f => f.Id == formId,
-
-              include: f => f
-
-                .Include(f => f.Questions)
-
-                  .ThenInclude(q => q.Options)
-
-                .Include(f => f.Submissions)
-
+                predicate: f => f.Id == formId,
+                include: f => f
+                    .Include(f => f.Questions)
+                        .ThenInclude(q => q.Options)
+                    .Include(f => f.Submissions)
             );
-
         }
-
-        //Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
 
         public async Task<IEnumerable<Form>> GetAllFormsAsync()
         {
@@ -85,7 +61,7 @@ namespace FeedbackForm.Services.Implementations
 
             form.Status = FormStatus.Published;
             form.PublishedOn = DateTime.UtcNow;
-            form.ShareableLink = $"http://localhost:5047/api/forms/{form.Id}";
+            form.ShareableLink = $"http://localhost:5047/api/form/{form.Id}";
 
             await _formRepo.UpdateAsync(form);
             return true;
