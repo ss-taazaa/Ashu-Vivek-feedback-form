@@ -13,7 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Submission> Submissions { get; set; }
     public DbSet<Answer> Answers { get; set; }
     public DbSet<AnswerOption> AnswerOptions { get; set; }
-   
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

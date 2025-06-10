@@ -10,7 +10,8 @@ using FeedbackForm.Services.Interfaces;
 
 namespace FeedbackForm.Services.Implementations
 {
-    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo) : IResponseService
+    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo,IGenericRepository<Answer>_answerRepo,
+        IGenericRepository<Question> _questionRepo,IGenericRepository<Option> _optionRepo,IGenericRepository<AnswerOption> _answerOptionRepo) : IResponseService
     {
 
         public async Task SubmitFormAsync(SubmitFormRequestDto dto)
@@ -75,6 +76,42 @@ namespace FeedbackForm.Services.Implementations
 
             return new SubmissionDto(submission);
         }
+
+        //public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
+        //{
+        //    try
+        //    {
+        //        var allSubmissions = await _submissionRepo.GetAllAsync();
+        //        var allAnswers = await _answerRepo.GetAllAsync();
+        //        var allQuestions = await _questionRepo.GetAllAsync();
+        //        var allAnswerOptions = await _answerOptionRepo.GetAllAsync();
+        //        var allOptions = await _optionRepo.GetAllAsync();
+        //        var submission = allSubmissions.FirstOrDefault(s => s.Id == id);
+        //        if (submission == null)
+        //            return null;
+        //        var answers = allAnswers.Where(a => a.SubmissionId == submission.Id).ToList();
+        //        foreach (var answer in answers)
+        //        {
+        //            answer.Question = allQuestions.FirstOrDefault(q => q.Id == answer.QuestionId);
+        //            var answerOptions = allAnswerOptions
+        //                .Where(ao => ao.AnswerId == answer.Id)
+        //                .ToList();
+        //            foreach (var ao in answerOptions)
+        //            {
+        //                ao.Option = allOptions.FirstOrDefault(o => o.Id == ao.OptionId);
+        //            }
+        //            answer.AnswerOptions = answerOptions;
+        //        }
+        //        submission.Answers = answers;
+        //        return new SubmissionDto(submission);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Failed to load submission details. " + ex.Message, ex);
+        //    }
+        //}
+
+
 
 
 

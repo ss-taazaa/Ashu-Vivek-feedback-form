@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedbackForm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250608130843_first")]
+    [Migration("20250610115229_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -76,11 +76,6 @@ namespace FeedbackForm.Migrations
                     b.HasIndex("SubmissionId");
 
                     b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("FeedbackForm.Models.ExceptionLog", b =>
-                {
-                    b.ToTable("ExceptionLogs");
                 });
 
             modelBuilder.Entity("FeedbackForm.Models.Form", b =>

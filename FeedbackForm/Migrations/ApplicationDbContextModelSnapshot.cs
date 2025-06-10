@@ -75,11 +75,6 @@ namespace FeedbackForm.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("FeedbackForm.Models.ExceptionLog", b =>
-                {
-                    b.ToTable("ExceptionLogs");
-                });
-
             modelBuilder.Entity("FeedbackForm.Models.Form", b =>
                 {
                     b.Property<Guid>("Id")

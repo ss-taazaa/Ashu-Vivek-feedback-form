@@ -6,9 +6,8 @@ using FeedbackForm.Models;
 public class AnswerDto
 {
     public Guid QuestionId { get; set; }
-    public string QuestionText { get; set; }
-    public string QuestionType { get; set; }
-
+    public string? QuestionText { get; set; }
+    public string? QuestionType { get; set; }
     public string? TextAnswer { get; set; }
     public int? RatingValue { get; set; }
     public int? Ranking { get; set; }

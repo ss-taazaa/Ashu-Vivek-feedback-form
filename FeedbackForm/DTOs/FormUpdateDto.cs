@@ -6,8 +6,11 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public int Status { get; set; }
-        public DateTime? PublishedOn { get; set; }
-        public DateTime? ClosedOn { get; set; }
-        public string? ShareableLink { get; set; }
+        //public DateTime? PublishedOn { get; set; }
+        //public DateTime? ClosedOn { get; set; }
+        //public string? ShareableLink { get; set; }
+
+        //public List<CreateQuestionDto> Questions { get; set; }
+
     }
 }

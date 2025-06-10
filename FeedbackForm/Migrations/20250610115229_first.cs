@@ -12,15 +12,6 @@ namespace FeedbackForm.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ExceptionLogs",
-                columns: table => new
-                {
-                },
-                constraints: table =>
-                {
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -224,9 +215,6 @@ namespace FeedbackForm.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AnswerOptions");
-
-            migrationBuilder.DropTable(
-                name: "ExceptionLogs");
 
             migrationBuilder.DropTable(
                 name: "Answers");

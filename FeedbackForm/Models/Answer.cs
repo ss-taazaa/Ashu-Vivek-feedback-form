@@ -30,12 +30,11 @@
             Id = Guid.NewGuid();
             QuestionId = dto.QuestionId;
             TextAnswer = dto.TextAnswer ?? string.Empty;
+
             RatingValue = dto.RatingValue;
             Ranking = dto.Ranking;
             AnswerOptions = dto.AnswerOptions?.Select(o => new AnswerOption(o)).ToList() ?? new();
         }
-
-
 
     }
 }
