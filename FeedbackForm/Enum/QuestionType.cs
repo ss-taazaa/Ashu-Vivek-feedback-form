@@ -1,6 +1,6 @@
 ﻿namespace FeedbackForm.Enum
 {
-    // Enums/QuestionType.cs
+    
     public enum QuestionType
     {
         SingleChoice = 1,

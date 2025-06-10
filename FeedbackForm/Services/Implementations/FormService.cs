@@ -1,43 +1,51 @@
-﻿using FeedbackForm.Models;
+﻿using FeedbackForm.Enum;
+using FeedbackForm.Models;
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace FeedbackForm.Services.Implementations
 {
     public class FormService : IFormService
     {
-        private readonly IGenericRepository<Form> _formRepo;
+        private readonly IFormRepository _formRepo;
+        private readonly AppSettings _appSettings;
 
-        public FormService(IGenericRepository<Form> formRepo)
+        public FormService(IFormRepository formRepo, IOptions<AppSettings> appSettings)
         {
             _formRepo = formRepo;
+            _appSettings = appSettings.Value;
         }
 
         public async Task<Form> CreateFormAsync(Form form)
         {
-            form.Status = FormStatus.Draft;
             form.CreatedOn = DateTime.UtcNow;
+
+            if (form.Status == FormStatus.Published)
+            {
+                form.PublishedOn = DateTime.UtcNow;
+                form.ShareableLink = $"{_appSettings.BaseUrl}/api/form/{form.Id}";
+            }
             return await _formRepo.AddAsync(form);
         }
 
+
         public async Task<Form> CreateFormWithQuestionsAsync(Form form, List<Question> questions)
         {
-            form.Status = FormStatus.Draft;
-            form.CreatedOn = DateTime.UtcNow;
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
 
         public async Task<Form> GetFormByIdAsync(Guid formId)
         {
-            return await _formRepo.GetSingleAsync(
-              predicate: f => f.Id == formId,
-              include: f => f
-                .Include(f => f.Questions)
-                  .ThenInclude(q => q.Options)
-                .Include(f => f.Submissions)
-            );
+            //return await _formRepo.Query()
+            //    .Where(f => f.Id == formId)
+            //    .FirstOrDefaultAsync();
+
+            return await _formRepo.GetByIdAsync(formId);
         }
+
+
         public async Task<IEnumerable<Form>> GetAllFormsAsync()
         {
             return await _formRepo.GetAllAsync(
@@ -56,24 +64,21 @@ namespace FeedbackForm.Services.Implementations
             var form = await _formRepo.GetByIdAsync(formId);
             if (form == null || form.Status != FormStatus.Draft)
                 return false;
-
             form.Status = FormStatus.Published;
             form.PublishedOn = DateTime.UtcNow;
-            form.ShareableLink = $"http://localhost:5047/api/forms/{form.Id}";
-
+            form.ShareableLink = $"{_appSettings.BaseUrl}/api/form/{form.Id}";
             await _formRepo.UpdateAsync(form);
             return true;
         }
+
 
         public async Task<bool> CloseFormAsync(Guid formId)
         {
             var form = await _formRepo.GetByIdAsync(formId);
             if (form == null || form.Status != FormStatus.Published)
                 return false;
-
             form.Status = FormStatus.Closed;
             form.ClosedOn = DateTime.UtcNow;
-
             await _formRepo.UpdateAsync(form);
             return true;
         }

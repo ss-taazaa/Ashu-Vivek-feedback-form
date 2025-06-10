@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FeedbackForm.DTOs;
 
 namespace FeedbackForm.Models
 {
@@ -19,5 +20,15 @@ namespace FeedbackForm.Models
             Email = email;
             CreatedOn = DateTime.UtcNow;
         }
+        
+
+        public User(UserCreateDto dto)
+        {
+            Id = Guid.NewGuid(); 
+            Name = dto.Name;
+            Email = dto.Email;
+            CreatedOn = DateTime.UtcNow;
+        }
+
     }
 }

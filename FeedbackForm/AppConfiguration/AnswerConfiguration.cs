@@ -29,6 +29,10 @@ namespace FeedbackForm.AppConfiguration
             builder.HasMany(a => a.AnswerOptions)
                    .WithOne(ao => ao.Answer)
                    .HasForeignKey(ao => ao.AnswerId);
+
+            builder.Property(a => a.TextAnswer)
+       .HasMaxLength(1000)
+       .IsRequired(false);
         }
     }
 }

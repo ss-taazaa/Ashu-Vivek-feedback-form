@@ -12,11 +12,20 @@ namespace FeedbackForm.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ExceptionLogs",
+                columns: table => new
+                {
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -30,8 +39,8 @@ namespace FeedbackForm.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PublishedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -56,7 +65,7 @@ namespace FeedbackForm.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FormId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Text = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     WordLimit = table.Column<int>(type: "integer", nullable: true),
                     IsRequired = table.Column<bool>(type: "boolean", nullable: false),
@@ -80,7 +89,8 @@ namespace FeedbackForm.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FormId = table.Column<Guid>(type: "uuid", nullable: false),
                     SubmittedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RespondentId = table.Column<string>(type: "text", nullable: false)
+                    RespondentName = table.Column<string>(type: "text", nullable: false),
+                    RespondentEmail = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,7 +109,7 @@ namespace FeedbackForm.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Text = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<int>(type: "integer", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -121,7 +131,7 @@ namespace FeedbackForm.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
                     SubmissionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TextAnswer = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    TextAnswer = table.Column<string>(type: "text", nullable: true),
                     RatingValue = table.Column<int>(type: "integer", nullable: true),
                     Ranking = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -148,9 +158,8 @@ namespace FeedbackForm.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AnswerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OptId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Rank = table.Column<int>(type: "integer", nullable: true),
-                    OptionId = table.Column<Guid>(type: "uuid", nullable: true)
+                    OptionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Rank = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -162,27 +171,17 @@ namespace FeedbackForm.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AnswerOptions_Options_OptId",
-                        column: x => x.OptId,
-                        principalTable: "Options",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_AnswerOptions_Options_OptionId",
                         column: x => x.OptionId,
                         principalTable: "Options",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnswerOptions_AnswerId",
                 table: "AnswerOptions",
                 column: "AnswerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AnswerOptions_OptId",
-                table: "AnswerOptions",
-                column: "OptId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnswerOptions_OptionId",
@@ -225,6 +224,9 @@ namespace FeedbackForm.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AnswerOptions");
+
+            migrationBuilder.DropTable(
+                name: "ExceptionLogs");
 
             migrationBuilder.DropTable(
                 name: "Answers");
