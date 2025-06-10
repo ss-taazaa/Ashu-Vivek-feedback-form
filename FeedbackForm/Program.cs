@@ -7,8 +7,10 @@ using FeedbackForm.Services.Implementations;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
