@@ -1,4 +1,4 @@
-﻿
+
 using FeedbackForm.Models;
 
 public class SubmissionDto
@@ -16,7 +16,6 @@ public class SubmissionDto
         RespondentName = submission.RespondentName;
         RespondentEmail = submission.RespondentEmail;
         SubmittedOn = submission.SubmittedOn;
-
         Answers = submission.Answers.Select(a => new AnswerDto(a)).ToList();
     }
 }

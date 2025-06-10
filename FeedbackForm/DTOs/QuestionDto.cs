@@ -1,8 +1,10 @@
-﻿using FeedbackForm.DTOs;
+
+using FeedbackForm.DTOs;
 using FeedbackForm.Enum;
 using FeedbackForm.Models;
 
 public class QuestionDto
+
 {
     public Guid Id { get; set; }
     public string Text { get; set; }

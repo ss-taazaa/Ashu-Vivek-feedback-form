@@ -37,10 +37,9 @@ public class FormsController(IFormService _formService, IUserService _userServic
         var form = await _formService.GetFormByIdAsync(id);
         if (form == null) return NotFound();
         var dto = new FormDto(form);  
+
         return Ok(dto);
     }
-
-
 
     [HttpGet]
     public async Task<IActionResult> GetAllForms()
