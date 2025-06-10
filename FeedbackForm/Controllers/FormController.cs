@@ -95,4 +95,15 @@ public class FormsController(IFormService _formService, IUserService _userServic
         var result = await _formService.UpdateFormQuestionsAsync(id, questions);
         return result ? Ok("Form questions updated successfully.") : BadRequest("Failed to update form questions.");
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteForm(Guid id)
+    {
+        var success = await _formService.DeleteFormAsync(id);
+        if (!success)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
 }

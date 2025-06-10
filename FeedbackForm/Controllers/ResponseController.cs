@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using FeedbackForm.DTOs;
 using FeedbackForm.Services.Interfaces;
 using FeedbackForm.Helper;
+using FeedbackForm.Services.Implementations;
 
 namespace FeedbackForm.Controllers
 {
@@ -51,6 +52,18 @@ namespace FeedbackForm.Controllers
                 return NotFound($"Submission with ID {id} not found.");
 
             return Ok(submission);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSubmission(Guid id)
+        {
+            var success = await _responseService.DeleteSubmissionAsync(id);
+            if (!success)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }

@@ -20,7 +20,8 @@ namespace FeedbackForm.AppConfiguration
 
             builder.HasMany(f => f.Submissions)
                    .WithOne(s => s.Form)
-                   .HasForeignKey(s => s.FormId);
+                   .HasForeignKey(s => s.FormId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -77,6 +77,17 @@ namespace FeedbackForm.Services.Implementations
             return new SubmissionDto(submission);
         }
 
+
+        public async Task<bool> DeleteSubmissionAsync(Guid id)
+        {
+            var existingSubmission = await _submissionRepo.GetByIdAsync(id);
+            if (existingSubmission == null)
+            {
+                return false;
+            }
+            _submissionRepo.Remove(existingSubmission);
+            return true;
+        }
         //public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
         //{
         //    try
