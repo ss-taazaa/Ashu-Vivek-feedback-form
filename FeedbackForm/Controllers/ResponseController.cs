@@ -54,18 +54,6 @@ namespace FeedbackForm.Controllers
             return Ok(submission);
         }
 
-
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteSubmission(Guid id)
-        //{
-        //    var success = await _responseService.DeleteSubmissionAsync(id);
-        //    if (!success)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return NoContent();
-        //}
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubmission(Guid id)
         {

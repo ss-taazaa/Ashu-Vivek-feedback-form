@@ -78,8 +78,6 @@ namespace FeedbackForm.Services.Implementations
         }
 
 
-
-
         public async Task<bool> DeleteSubmission(Guid Id)
         {
             var submission = await _applicationDbContext.Submissions.FindAsync(Id);

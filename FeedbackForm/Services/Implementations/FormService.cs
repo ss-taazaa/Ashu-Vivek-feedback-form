@@ -135,16 +135,6 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.UpdateFormQuestionsAsync(formId, questions);
         }
 
-        //public async Task<bool> DeleteFormAsync(Guid formid)
-        //{
-        //    var existingForm = await _formRepo.GetByIdAsync(formid);
-        //    if (existingForm == null)
-        //    {
-        //        return false;
-        //    }
-        //    _formRepo.Remove(existingForm);
-        //    return true;
-        //}
 
         public async Task<bool> DeleteForm(Guid formId)
         {

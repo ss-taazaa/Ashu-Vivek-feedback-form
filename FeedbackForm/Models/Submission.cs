@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace FeedbackForm.Models
+﻿namespace FeedbackForm.Models
 {
     public class Submission : BaseEntity
     {
@@ -12,8 +9,8 @@ namespace FeedbackForm.Models
         public bool isDeleted { get; set; }
         //public DateTime isModified { get; set; }
 
-        public string RespondentName { get; set; }         
-        public string RespondentEmail { get; set; }        
+        public string RespondentName { get; set; }
+        public string RespondentEmail { get; set; }
 
         public ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
