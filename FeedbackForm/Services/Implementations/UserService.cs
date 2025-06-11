@@ -2,9 +2,10 @@
 using FeedbackForm.Models;
 using FeedbackForm.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using FeedbackForm.DTOs;
 namespace FeedbackForm.Services.Implementations
 {
-    public class UserService (IGenericRepository<User> _userRepository) : IUserService
+    public class UserService (IGenericRepository<User> _userRepository,IGenericRepository<Submission> _submission) : IUserService
     {
 
        
@@ -47,18 +48,50 @@ namespace FeedbackForm.Services.Implementations
 
         }
 
-        public async Task<bool> DeleteUserAsync(Guid id)
+        //public async Task<bool> DeleteUserAsync(Guid id)
+        //{
+        //    var existingUser= await _userRepository.GetByIdAsync(id);
+        //    if(existingUser == null)
+        //    {
+        //        return false;
+        //    }
+
+
+        //    existingUser.isDeleted = true;
+        //    existingUser.isModified = DateTime.UtcNow;
+        //    _userRepository.Remove(existingUser);
+        //    return true;
+        //}
+
+
+        public async Task<ApiResponseDto> DeleteUserAsync(Guid userId)
         {
-            var existingUser= await _userRepository.GetByIdAsync(id);
-            if(existingUser == null)
+            var existingUser = await _userRepository.Query()
+                .Include(u => u.Forms)
+                    .ThenInclude(f => f.Submissions)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (existingUser == null)
+                return new ApiResponseDto(false, "No user exists");
+            bool hasActiveForms = existingUser.Forms.Any(f => !f.isDeleted);
+            if (hasActiveForms)
+                return new ApiResponseDto(false, "Delete all forms first. User will be deleted once all the forms are deleted.");
+            foreach (var form in existingUser.Forms)
             {
-                return false;
+                foreach (var submission in form.Submissions.ToList())
+                {
+                    _submission.Remove(submission); // hard delete
+                }
             }
             existingUser.isDeleted = true;
             existingUser.isModified = DateTime.UtcNow;
-            _userRepository.Remove(existingUser);
-            return true;
+
+            await _userRepository.SaveChangesAsync();
+
+            return new ApiResponseDto(true, "User and associated submissions have been deleted");
         }
+
+
+
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {

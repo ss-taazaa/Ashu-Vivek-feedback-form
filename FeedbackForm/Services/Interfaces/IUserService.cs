@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using FeedbackForm.DTOs;
 using FeedbackForm.Models;
 
 namespace FeedbackForm.Services.Interfaces
@@ -9,7 +10,7 @@ namespace FeedbackForm.Services.Interfaces
         Task<User> GetUserById(Guid id);
         Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(Guid id, User user);
-        Task<bool> DeleteUserAsync(Guid id);
+        Task<ApiResponseDto> DeleteUserAsync(Guid id);
         Task<User?> GetUserByEmailAsync(string email);
 
     }

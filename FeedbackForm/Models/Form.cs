@@ -18,12 +18,9 @@ namespace FeedbackForm.Models
         public DateTime? isModified { get; set; } = null;
         public Guid UserId { get; set; }
         public User User { get; set; }
-
         public ICollection<Question> Questions { get; set; } = new List<Question>();
         public ICollection<Submission> Submissions { get; set; } = new List<Submission>();
-
         public Form() { }
-
         public Form(string title, string description, FormStatus status, DateTime createdOn, DateTime? publishedOn, DateTime? closedOn, string shareableLink, Guid userId)
         {
             Title = title;
@@ -36,10 +33,6 @@ namespace FeedbackForm.Models
             UserId = userId;
           
         }
-
-
-
-
 
         public Form(CreateFormRequestDto request)
         {

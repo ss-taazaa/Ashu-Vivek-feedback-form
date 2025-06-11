@@ -89,11 +89,11 @@ namespace FeedbackForm.Controllers
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             var success = await _userService.DeleteUserAsync(id);
-            if (!success)
+            if (!success.Success)
             {
-                return NotFound();
+                return BadRequest(success.Message);
             }
-            return NoContent();
+            return Ok();
         }
 
     }

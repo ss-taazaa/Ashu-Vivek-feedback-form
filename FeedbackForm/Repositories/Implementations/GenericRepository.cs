@@ -93,5 +93,16 @@ namespace FeedbackForm.Repositories.Implementations
             return await query.FirstOrDefaultAsync(predicate);
         }
 
+
+        public IQueryable<T> Query()
+        {
+            return _dbSet.AsQueryable();
+        }
+
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
     }
 }

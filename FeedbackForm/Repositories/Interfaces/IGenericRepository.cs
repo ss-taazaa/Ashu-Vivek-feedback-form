@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using FeedbackForm.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FeedbackForm.Repositories.Interfaces
 {
@@ -15,5 +16,7 @@ namespace FeedbackForm.Repositories.Interfaces
         Task<T?> GetSingleAsync(
             Expression<Func<T, bool>> predicate,
             Func<IQueryable<T>, IQueryable<T>>? include = null);
+        IQueryable<T> Query();
+        Task<int> SaveChangesAsync();
     }
 }

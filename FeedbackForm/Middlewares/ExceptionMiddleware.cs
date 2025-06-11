@@ -38,6 +38,7 @@ namespace FeedbackForm.Middlewares
             string userMessage = "An unexpected error occurred. Please try again later.";
             if (exception is ArgumentNullException || exception is ArgumentException)
             {
+
                 statusCode = HttpStatusCode.BadRequest;
                 userMessage = "Invalid input provided.";
             }

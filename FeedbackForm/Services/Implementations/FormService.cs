@@ -1,6 +1,7 @@
 ﻿using FeedbackForm.DTOs;
 using FeedbackForm.Enum;
 using FeedbackForm.Models;
+using FeedbackForm.Repositories.Implementations;
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace FeedbackForm.Services.Implementations
         private readonly IFormRepository _formRepo;
         private readonly AppSettings _appSettings;
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IUserService _userService;
         public FormService(IFormRepository formRepo, IOptions<AppSettings> appSettings, ApplicationDbContext applicationDbContext)
         {
             _formRepo = formRepo;
@@ -30,6 +32,7 @@ namespace FeedbackForm.Services.Implementations
                     form.ShareableLink = $"{_appSettings.BaseUrl}/api/form/{form.Id}";
                 }
             }
+            //var checkUserExistence= await _userService.GetUserByEmailAsync(form.)
             return await _formRepo.AddAsync(form);
         }
 
@@ -125,6 +128,14 @@ namespace FeedbackForm.Services.Implementations
             _applicationDbContext.Forms.Update(form);
             await _applicationDbContext.SaveChangesAsync();
             return true;
+        }
+
+
+
+
+        public async Task<IEnumerable<Form>> GetFormsByUserIdAsync(Guid userId)
+        {
+            return await _formRepo.FindAsync(f => f.UserId == userId && !f.isDeleted, f => f.Questions, f => f.Submissions);
         }
     }
 }

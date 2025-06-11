@@ -101,6 +101,21 @@ public class FormsController(IFormService _formService, IUserService _userServic
     }
 
 
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetFormsByUserId(Guid userId)
+    {
+        var user = await _userService.GetUserById(userId);
+        if (user == null)
+            return NotFound(new ApiResponseDto { Success = false, Message = "User not found." });
+
+        var forms = await _formService.GetFormsByUserIdAsync(userId);
+        var result = forms
+            .Where(f => !f.isDeleted)
+            .Select(f => new FormListItemDto(f))
+            .ToList();
+
+        return Ok(result);
+    }
 
 
 
