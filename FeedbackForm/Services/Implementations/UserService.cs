@@ -59,7 +59,13 @@ namespace FeedbackForm.Services.Implementations
             _userRepository.Remove(existingUser);
             return true;
         }
-      
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userRepository.GetSingleAsync(u => u.Email == email);
+        }
+
+
 
     }
 }

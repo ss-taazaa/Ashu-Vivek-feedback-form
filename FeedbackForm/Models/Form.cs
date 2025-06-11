@@ -15,7 +15,7 @@ namespace FeedbackForm.Models
         public DateTime? ClosedOn { get; set; }
         public string ShareableLink { get; set; }
         public bool isDeleted { get; set; }
-        public DateTime isModified { get; set; } = new DateTime();
+        public DateTime? isModified { get; set; } = null;
         public Guid UserId { get; set; }
         public User User { get; set; }
 
@@ -36,6 +36,10 @@ namespace FeedbackForm.Models
             UserId = userId;
           
         }
+
+
+
+
 
         public Form(CreateFormRequestDto request)
         {

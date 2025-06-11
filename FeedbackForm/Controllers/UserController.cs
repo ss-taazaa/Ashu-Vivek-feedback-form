@@ -28,6 +28,19 @@ namespace FeedbackForm.Controllers
         }
 
 
+        [HttpGet("by-email/{email}")]
+
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
+        {
+            var user = await _userService.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
         {
@@ -35,8 +48,14 @@ namespace FeedbackForm.Controllers
             {
                return BadRequest("Invalid user data.");
             }
+
             try
             {
+                var checkExistingUser = await _userService.GetUserByEmailAsync(userCreateDto.Email);
+                if(checkExistingUser != null)
+                {
+                    return BadRequest("User with this email already exists.");
+                }
                 var user = new User(userCreateDto);
                 await _userService.CreateUserAsync(user);
                 return Ok("User has been successfully created.");

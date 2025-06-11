@@ -42,6 +42,7 @@ namespace FeedbackForm.Services.Implementations
         {
             var form = await _formRepo.Query()
                 .Where(f => f.Id == formId && !f.isDeleted)
+                .Include(f=>f.User)
                 .Include(f => f.Questions)
                 .ThenInclude(q => q.Options)
                 .FirstOrDefaultAsync();

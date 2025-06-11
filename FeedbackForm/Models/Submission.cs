@@ -59,8 +59,5 @@ namespace FeedbackForm.Models
             }).ToList() ?? new List<Answer>();
         }
 
-
-
-
     }
 }

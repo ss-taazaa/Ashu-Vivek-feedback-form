@@ -8,6 +8,8 @@ public class FormDto
     public string Description { get; set; }
     public FormStatus Status { get; set; }
     public string ShareableLink { get; set; }
+    public string userEmail { get; set; }
+    public string userName { get; set; }
     public DateTime CreatedOn { get; set; }
     public DateTime? PublishedOn { get; set; }
     public DateTime? ClosedOn { get; set; }
@@ -21,6 +23,8 @@ public class FormDto
         Id = form.Id;
         Title = form.Title;
         Description = form.Description;
+        userName = form.User?.Name;
+        userEmail = form.User?.Email;
         Status = form.Status;
         ShareableLink = form.ShareableLink;
         CreatedOn = form.CreatedOn;
@@ -29,4 +33,6 @@ public class FormDto
         Questions = form.Questions?.Select(q => new QuestionDto(q)).ToList();
         Submissions = form.Submissions?.Select(s => new SubmissionDto(s)).ToList();
     }
+   
+
 }
