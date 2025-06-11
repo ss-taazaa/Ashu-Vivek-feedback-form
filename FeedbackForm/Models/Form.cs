@@ -1,6 +1,9 @@
-﻿namespace FeedbackForm.Models
+﻿using FeedbackForm.DTOs;
+using FeedbackForm.Enum;
+
+namespace FeedbackForm.Models
 {
-    public enum FormStatus { Draft, Published, Closed }
+  
 
     public class Form : BaseEntity
     {
@@ -11,7 +14,8 @@
         public DateTime? PublishedOn { get; set; }
         public DateTime? ClosedOn { get; set; }
         public string ShareableLink { get; set; }
-
+        public bool isDeleted { get; set; }
+        public DateTime isModified { get; set; } = new DateTime();
         public Guid UserId { get; set; }
         public User User { get; set; }
 
@@ -30,6 +34,35 @@
             ClosedOn = closedOn;
             ShareableLink = shareableLink;
             UserId = userId;
+          
+        }
+
+        public Form(CreateFormRequestDto request)
+        {
+            Id = Guid.NewGuid();
+            Title = request.Title;
+            Description = request.Description;
+            Status = request.Status;
+            CreatedOn = DateTime.UtcNow;
+            UserId = request.UserId;
+            ShareableLink = "";
+
+            Questions = request.Questions?.Select(q => new Question
+            {
+                Id = Guid.NewGuid(),
+                Text = q.Text,
+                Type = q.Type,
+                WordLimit = q.WordLimit ?? 0,
+                IsRequired = q.IsRequired,
+                Order = q.Order,
+                Options = q.Options?.Select(o => new Option
+                {
+                    Id = Guid.NewGuid(),
+                    Text = o.Text,
+                    Value = o.Value,
+                    Order = o.Order
+                }).ToList()
+            }).ToList();
         }
     }
 }

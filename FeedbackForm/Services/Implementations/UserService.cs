@@ -4,35 +4,27 @@ using FeedbackForm.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 namespace FeedbackForm.Services.Implementations
 {
-    public class UserService : IUserService
+    public class UserService (IGenericRepository<User> _userRepository) : IUserService
     {
 
-        private readonly IGenericRepository<User> _userRepository;
-
-        public UserService(IGenericRepository<User> userService)
-        {
-
-            _userRepository = userService;
-
-        }
-
+       
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _userRepository.GetQueryable()
-            .Include(u => u.Forms)
-            .ToListAsync();
+            var existingUsers= await _userRepository.GetAllAsync();
+            return existingUsers.Where(s => !s.isDeleted);
         }
 
 
         public async Task<User> GetUserById(Guid id)
         {
-            return await _userRepository.GetQueryable()
-                .Include(u => u.Forms)
-                .FirstOrDefaultAsync(u => u.Id == id);
+
+            var existing= await _userRepository.GetByIdAsync(id);
+            if(existing==null || existing.isDeleted)
+            {
+                return null;
+            }
+            return existing;
         }
-
-
-
 
         public async Task<User> CreateUserAsync(User user)
         {
@@ -55,7 +47,6 @@ namespace FeedbackForm.Services.Implementations
 
         }
 
-
         public async Task<bool> DeleteUserAsync(Guid id)
         {
             var existingUser= await _userRepository.GetByIdAsync(id);
@@ -63,18 +54,12 @@ namespace FeedbackForm.Services.Implementations
             {
                 return false;
             }
+            existingUser.isDeleted = true;
+            existingUser.isModified = DateTime.UtcNow;
             _userRepository.Remove(existingUser);
             return true;
         }
-
-        public async Task<User?> GetUserWithFormsAsync(Guid id)
-        {
-            // Use EF's Include to load related forms
-            return await _userRepository
-                .GetQueryable() // Custom method in GenericRepository — see below
-                .Include(u => u.Forms)
-                .FirstOrDefaultAsync(u => u.Id == id);
-        }
+      
 
     }
 }

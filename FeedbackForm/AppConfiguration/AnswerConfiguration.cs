@@ -12,8 +12,10 @@ namespace FeedbackForm.AppConfiguration
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.TextAnswer)
-                   .HasMaxLength(1000); 
-
+                   .HasMaxLength(1000);
+            builder.Property(a => a.TextAnswer)
+                   .HasColumnName("TextAnswer")
+                   .IsRequired(false);
             builder.Property(a => a.RatingValue);
 
             builder.Property(a => a.Ranking);
@@ -29,6 +31,10 @@ namespace FeedbackForm.AppConfiguration
             builder.HasMany(a => a.AnswerOptions)
                    .WithOne(ao => ao.Answer)
                    .HasForeignKey(ao => ao.AnswerId);
+
+            builder.Property(a => a.TextAnswer)
+       .HasMaxLength(1000)
+       .IsRequired(false);
         }
     }
 }

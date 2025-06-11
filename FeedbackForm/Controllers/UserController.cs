@@ -1,5 +1,6 @@
 ﻿using FeedbackForm.DTOs;
 using FeedbackForm.Models;
+using FeedbackForm.Helper; 
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,16 +8,8 @@ namespace FeedbackForm.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController(IUserService _userService) : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        public UsersController(IUserService userService)
-        {
-            _userService = userService;
-        }
-
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
@@ -31,7 +24,6 @@ namespace FeedbackForm.Controllers
             var user = await _userService.GetUserById(id);
             if (user == null)
                 return NotFound();
-
             return Ok(user);
         }
 
@@ -39,62 +31,39 @@ namespace FeedbackForm.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = new User
+            if (!Utils.NameValidator(userCreateDto.Name).Success || !Utils.EmailValidator(userCreateDto.Email).Success)
             {
-                Name = userCreateDto.Name,
-                Email = userCreateDto.Email,
-                CreatedOn = DateTime.UtcNow
-            };
-
-            await _userService.CreateUserAsync(user);
-
-            var responseDto = new UserDto
+               return BadRequest("Invalid user data.");
+            }
+            try
             {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                CreatedOn = user.CreatedOn,
-                FormIds = new List<Guid>()
-            };
-
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, responseDto);
+                var user = new User(userCreateDto);
+                await _userService.CreateUserAsync(user);
+                return Ok("User has been successfully created.");
+            }
+            catch (Exception)
+            {
+                return BadRequest("Failed to create user.");
+            }
         }
 
 
-
-
-        // [HttpPut("{id}")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserCreateDto userCreateDto)
         {
             var existingUser = await _userService.GetUserById(id);
             if (existingUser == null)
                 return NotFound();
-
-            // Update allowed fields
+            if (!Utils.NameValidator(userCreateDto.Name).Success || Utils.EmailValidator(userCreateDto.Email).Success)
+            {
+                return BadRequest("Invalid user data.");
+            }
             existingUser.Name = userCreateDto.Name;
             existingUser.Email = userCreateDto.Email;
-
             var updatedUser = await _userService.UpdateUserAsync(id, existingUser);
-
-            var responseDto = new UserDto
-            {
-                Id = updatedUser.Id,
-                Name = updatedUser.Name,
-                Email = updatedUser.Email,
-                CreatedOn = updatedUser.CreatedOn,
-                FormIds = updatedUser.Forms?.Select(f => f.Id).ToList() ?? new List<Guid>()
-            };
-
+            var responseDto = new UserDto(updatedUser);
             return Ok(responseDto);
         }
-
-
-
-
 
 
         [HttpDelete("{id}")]
@@ -105,10 +74,8 @@ namespace FeedbackForm.Controllers
             {
                 return NotFound();
             }
-
             return NoContent();
         }
-
 
     }
 }

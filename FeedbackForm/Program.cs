@@ -1,33 +1,23 @@
-using FeedbackForm.Data;
+using FeedbackForm.Middlewares;
+using FeedbackForm.Models;
 using FeedbackForm.Repositories.Implementations;
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Implementations;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-//using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 builder.Services.AddControllers();
-    //.AddJsonOptions(options =>
-    //{
-    //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    //    options.JsonSerializerOptions.WriteIndented = true;
-    //});
-
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<IFormService, FormService>();
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IResponseService, ResponseService>();
-
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IFormService, FormService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IResponseService, ResponseService>();
+builder.Services.AddScoped<IFormRepository, FormRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -36,20 +26,20 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
-
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<RequestResponseLoggingFilter>();
+});
+builder.Services.AddLogging();
 var app = builder.Build();
-
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.UseCors("AllowAll");
-
+app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

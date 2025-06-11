@@ -8,9 +8,9 @@
         public Guid SubmissionId { get; set; }
         public Submission Submission { get; set; }
 
-        public string TextAnswer { get; set; }         // For text or multi-line answers
-        public int? RatingValue { get; set; }          // For star rating questions
-        public int? Ranking { get; set; }              // For ranking questions
+        public string? TextAnswer { get; set; }         
+        public int? RatingValue { get; set; }         
+        public int? Ranking { get; set; }            
 
         public ICollection<AnswerOption> AnswerOptions { get; set; } = new List<AnswerOption>();
 
@@ -25,5 +25,16 @@
             RatingValue = ratingValue;
             Ranking = ranking;
         }
+        public Answer(AnswerDto dto)
+        {
+            Id = Guid.NewGuid();
+            QuestionId = dto.QuestionId;
+            TextAnswer = dto.TextAnswer ?? string.Empty;
+
+            RatingValue = dto.RatingValue;
+            Ranking = dto.Ranking;
+            AnswerOptions = dto.AnswerOptions?.Select(o => new AnswerOption(o)).ToList() ?? new();
+        }
+
     }
 }

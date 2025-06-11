@@ -10,19 +10,8 @@ using FeedbackForm.Services.Interfaces;
 
 namespace FeedbackForm.Services.Implementations
 {
-    public class ResponseService : IResponseService
+    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo,ApplicationDbContext _applicationDbContext) : IResponseService
     {
-        private readonly IGenericRepository<Form> _formRepo;
-        private readonly IGenericRepository<Submission> _submissionRepo;
-
-        public ResponseService(
-            IGenericRepository<Form> formRepo,
-            IGenericRepository<Submission> submissionRepo)
-        {
-            _formRepo = formRepo;
-            _submissionRepo = submissionRepo;
-        }
-
         public async Task SubmitFormAsync(SubmitFormRequestDto dto)
         {
             var form = await _formRepo.GetSingleAsync(
@@ -32,45 +21,23 @@ namespace FeedbackForm.Services.Implementations
 
             if (form == null)
                 throw new Exception("Form not found.");
-
-            var submission = new Submission
+            var validOptionIds = form.Questions
+                .SelectMany(q => q.Options)
+                .Select(o => o.Id)
+                .ToHashSet(); 
+            var submission = new Submission(dto, form.Id);
+            foreach (var answer in submission.Answers)
             {
-                Id = Guid.NewGuid(),
-                FormId = form.Id,
-                SubmittedOn = DateTime.UtcNow,
-                RespondentName = dto.RespondentName,
-                RespondentEmail = dto.RespondentEmail,
-                Answers = new List<Answer>()
-            };
-
-            foreach (var answerDto in dto.Answers)
-            {
-                var answer = new Answer
+                if (answer.AnswerOptions != null)
                 {
-                    Id = Guid.NewGuid(),
-                    QuestionId = answerDto.QuestionId,
-                    SubmissionId = submission.Id,
-                    TextAnswer = answerDto.TextAnswer ?? string.Empty,
-                    RatingValue = answerDto.RatingValue,
-                    Ranking = answerDto.Ranking,
-                    AnswerOptions = new List<AnswerOption>()
-                };
-
-                if (answerDto.AnswerOptions != null)
-                {
-                    foreach (var optionDto in answerDto.AnswerOptions)
+                    foreach (var answerOption in answer.AnswerOptions)
                     {
-                        answer.AnswerOptions.Add(new AnswerOption
-                        {
-                            Id = Guid.NewGuid(),
-                            OptId = optionDto.OptionId
-                        });
+                        if (!validOptionIds.Contains(answerOption.OptionId))
+                            throw new Exception($"Invalid Option ID: {answerOption.OptionId}");
+                        answerOption.Option = null;
                     }
                 }
-
-                submission.Answers.Add(answer);
             }
-
             try
             {
                 await _submissionRepo.AddAsync(submission);
@@ -79,7 +46,45 @@ namespace FeedbackForm.Services.Implementations
             {
                 throw new Exception("Error saving submission: " + ex.InnerException?.Message, ex);
             }
-
         }
+
+        public async Task<List<SubmissionDto>> GetAllSubmissionsAsync()
+        {
+            var submissions = await _submissionRepo.GetAllAsync();
+            var existingSubmissions = submissions.Where(s => !s.isDeleted);
+            return existingSubmissions.Select(s => new SubmissionDto(s)).ToList();
+        }
+
+        public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
+        {
+            var submission = await _submissionRepo.GetSingleAsync(
+                s => s.Id == id,
+                include: s => s
+                    .Include(x => x.Answers)
+                        .ThenInclude(a => a.Question)
+                    .Include(x => x.Answers)
+                        .ThenInclude(a => a.AnswerOptions)
+                            .ThenInclude(ao => ao.Option)
+            );
+
+            if (submission == null || submission.isDeleted)
+                return null;
+
+            return new SubmissionDto(submission);
+        }
+
+        public async Task<bool> DeleteSubmission(Guid Id)
+        {
+            var submission = await _applicationDbContext.Submissions.FindAsync(Id);
+            if (submission == null || submission.isDeleted)
+                return false;
+
+            submission.isDeleted = true;
+            submission.IsModified = DateTime.UtcNow;
+            _applicationDbContext.Submissions.Update(submission);
+            await _applicationDbContext.SaveChangesAsync();
+            return true;
+        }
+
     }
 }
