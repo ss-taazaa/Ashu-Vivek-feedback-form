@@ -15,6 +15,9 @@ namespace FeedbackForm.Models
         public DateTime? ClosedOn { get; set; }
         public string ShareableLink { get; set; }
 
+        public bool isDeleted{get; set;}
+        public DateTime isModified { get; set;}
+
         public Guid UserId { get; set; }
         public User User { get; set; }
 

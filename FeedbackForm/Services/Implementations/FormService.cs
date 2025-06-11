@@ -10,6 +10,7 @@ namespace FeedbackForm.Services.Implementations
     public class FormService : IFormService
     {
         private readonly IFormRepository _formRepo;
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly AppSettings _appSettings;
         private readonly IGenericRepository<Question> _questionRepo;
         private readonly IGenericRepository<Option> _optionRepo;
@@ -134,16 +135,29 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.UpdateFormQuestionsAsync(formId, questions);
         }
 
-        public async Task<bool> DeleteFormAsync(Guid formid)
+        //public async Task<bool> DeleteFormAsync(Guid formid)
+        //{
+        //    var existingForm = await _formRepo.GetByIdAsync(formid);
+        //    if (existingForm == null)
+        //    {
+        //        return false;
+        //    }
+        //    _formRepo.Remove(existingForm);
+        //    return true;
+        //}
+
+        public async Task<bool> DeleteForm(Guid formId)
         {
-            var existingForm = await _formRepo.GetByIdAsync(formid);
-            if (existingForm == null)
-            {
+            var form = await _applicationDbContext.Forms.FindAsync(formId);
+            if (form == null || form.isDeleted)
                 return false;
-            }
-            _formRepo.Remove(existingForm);
+
+            form.isDeleted = true;
+            form.isModified = DateTime.UtcNow;
+
+            _applicationDbContext.Forms.Update(form);
+            await _applicationDbContext.SaveChangesAsync();
             return true;
         }
-
     }
 }

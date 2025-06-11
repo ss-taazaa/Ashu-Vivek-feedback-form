@@ -96,14 +96,30 @@ public class FormsController(IFormService _formService, IUserService _userServic
         return result ? Ok("Form questions updated successfully.") : BadRequest("Failed to update form questions.");
     }
 
+    //[HttpDelete("{id}")]
+    //public async Task<IActionResult> DeleteForm(Guid id)
+    //{
+    //    var success = await _formService.DeleteFormAsync(id);
+    //    if (!success)
+    //    {
+    //        return NotFound();
+    //    }
+    //    return NoContent();
+    //}
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteForm(Guid id)
     {
-        var success = await _formService.DeleteFormAsync(id);
-        if (!success)
+        try
         {
-            return NotFound();
+            var deleted = await _formService.DeleteForm(id);
+            if (!deleted)
+                return NotFound(new { Message = "Form not found or already deleted." });
+            return Ok(new { Message = "Form soft-deleted successfully." });
         }
-        return NoContent();
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "Internal server error", Error = ex.Message });
+        }
     }
 }

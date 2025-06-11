@@ -9,9 +9,9 @@ using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
 
 namespace FeedbackForm.Services.Implementations
+
 {
-    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo,IGenericRepository<Answer>_answerRepo,
-        IGenericRepository<Question> _questionRepo,IGenericRepository<Option> _optionRepo,IGenericRepository<AnswerOption> _answerOptionRepo) : IResponseService
+    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo, ApplicationDbContext _applicationDbContext) : IResponseService
     {
 
         public async Task SubmitFormAsync(SubmitFormRequestDto dto)
@@ -56,7 +56,8 @@ namespace FeedbackForm.Services.Implementations
         public async Task<List<SubmissionDto>> GetAllSubmissionsAsync()
         {
             var submissions = await _submissionRepo.GetAllAsync();
-            return submissions.Select(s => new SubmissionDto(s)).ToList();
+            var Existingsubmission = submissions.Where(s => !s.isDeleted);
+            return Existingsubmission.Select(s => new SubmissionDto(s)).ToList();
         }
 
         public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
@@ -70,62 +71,31 @@ namespace FeedbackForm.Services.Implementations
                         .ThenInclude(a => a.AnswerOptions)
                             .ThenInclude(ao => ao.Option)
             );
-
-            if (submission == null)
+            if (submission == null ||  submission.isDeleted)
                 return null;
 
             return new SubmissionDto(submission);
         }
 
 
-        public async Task<bool> DeleteSubmissionAsync(Guid id)
+
+
+        public async Task<bool> DeleteSubmission(Guid Id)
         {
-            var existingSubmission = await _submissionRepo.GetByIdAsync(id);
-            if (existingSubmission == null)
-            {
+            var submission = await _applicationDbContext.Submissions.FindAsync(Id);
+            if (submission == null || submission.isDeleted)
                 return false;
-            }
-            _submissionRepo.Remove(existingSubmission);
+
+            submission.isDeleted = true;
+            submission.isModified = DateTime.UtcNow;
+
+            _applicationDbContext.Submissions.Update(submission);
+            await _applicationDbContext.SaveChangesAsync();
             return true;
         }
-        //public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
-        //{
-        //    try
-        //    {
-        //        var allSubmissions = await _submissionRepo.GetAllAsync();
-        //        var allAnswers = await _answerRepo.GetAllAsync();
-        //        var allQuestions = await _questionRepo.GetAllAsync();
-        //        var allAnswerOptions = await _answerOptionRepo.GetAllAsync();
-        //        var allOptions = await _optionRepo.GetAllAsync();
-        //        var submission = allSubmissions.FirstOrDefault(s => s.Id == id);
-        //        if (submission == null)
-        //            return null;
-        //        var answers = allAnswers.Where(a => a.SubmissionId == submission.Id).ToList();
-        //        foreach (var answer in answers)
-        //        {
-        //            answer.Question = allQuestions.FirstOrDefault(q => q.Id == answer.QuestionId);
-        //            var answerOptions = allAnswerOptions
-        //                .Where(ao => ao.AnswerId == answer.Id)
-        //                .ToList();
-        //            foreach (var ao in answerOptions)
-        //            {
-        //                ao.Option = allOptions.FirstOrDefault(o => o.Id == ao.OptionId);
-        //            }
-        //            answer.AnswerOptions = answerOptions;
-        //        }
-        //        submission.Answers = answers;
-        //        return new SubmissionDto(submission);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Failed to load submission details. " + ex.Message, ex);
-        //    }
-        //}
 
 
-
-
-
+       
 
 
     }

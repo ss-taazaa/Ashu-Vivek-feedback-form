@@ -55,15 +55,31 @@ namespace FeedbackForm.Controllers
         }
 
 
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteSubmission(Guid id)
+        //{
+        //    var success = await _responseService.DeleteSubmissionAsync(id);
+        //    if (!success)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return NoContent();
+        //}
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubmission(Guid id)
         {
-            var success = await _responseService.DeleteSubmissionAsync(id);
-            if (!success)
+            try
             {
-                return NotFound();
+                var deleted = await _responseService.DeleteSubmission(id);
+                if (!deleted)
+                    return NotFound(new { Message = "Submission not found or already deleted." });
+                return Ok(new { Message = "Submission soft-deleted successfully." });
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal server error", Error = ex.Message });
+            }
         }
     }
 }

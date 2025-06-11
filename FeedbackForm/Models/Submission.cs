@@ -9,6 +9,8 @@ namespace FeedbackForm.Models
         public Form Form { get; set; }
 
         public DateTime SubmittedOn { get; set; }
+        public bool isDeleted { get; set; }
+        //public DateTime isModified { get; set; }
 
         public string RespondentName { get; set; }         
         public string RespondentEmail { get; set; }        

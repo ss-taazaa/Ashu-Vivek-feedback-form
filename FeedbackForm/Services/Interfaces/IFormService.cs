@@ -12,7 +12,8 @@ namespace FeedbackForm.Services.Interfaces
         Task<Form> UpdateFormAsync(Form form);
         Task<bool> PublishFormAsync(Guid formId);
         Task<bool> CloseFormAsync(Guid formId);
+
         Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions);
-        Task<bool> DeleteFormAsync(Guid id);
+        Task<bool> DeleteForm(Guid id);
     }
 }
