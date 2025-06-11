@@ -9,7 +9,7 @@ using FeedbackForm.Helper;
 namespace FeedbackForm.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/response")]
     public class ResponseController(IResponseService _responseService) : ControllerBase
     {
        
@@ -51,6 +51,22 @@ namespace FeedbackForm.Controllers
                 return NotFound($"Submission with ID {id} not found.");
 
             return Ok(submission);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSubmission(Guid id)
+        {
+            try
+            {
+                var deletedSubmission = await _responseService.DeleteSubmission(id);
+                if (!deletedSubmission)
+                    return NotFound(new { Message = "Submission not found or already deleted." });
+                return Ok(new { Message = "Submission soft-deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal server error", Error = ex.Message });
+            }
         }
     }
 }

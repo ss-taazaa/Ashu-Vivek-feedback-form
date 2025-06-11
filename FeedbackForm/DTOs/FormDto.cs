@@ -14,7 +14,6 @@ public class FormDto
     public List<QuestionDto> Questions { get; set; }
     public List<SubmissionDto> Submissions { get; set; }
 
-    // New property to expose submission count
     public int SubmissionCount => Submissions?.Count ?? 0;
 
     public FormDto(Form form)
@@ -27,7 +26,6 @@ public class FormDto
         CreatedOn = form.CreatedOn;
         PublishedOn = form.PublishedOn;
         ClosedOn = form.ClosedOn;
-
         Questions = form.Questions?.Select(q => new QuestionDto(q)).ToList();
         Submissions = form.Submissions?.Select(s => new SubmissionDto(s)).ToList();
     }

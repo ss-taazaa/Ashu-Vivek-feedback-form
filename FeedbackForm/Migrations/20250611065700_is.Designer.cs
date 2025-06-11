@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedbackForm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250610115229_first")]
-    partial class first
+    [Migration("20250611065700_is")]
+    partial class @is
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,6 +111,12 @@ namespace FeedbackForm.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("isModified")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
@@ -185,6 +191,9 @@ namespace FeedbackForm.Migrations
                     b.Property<Guid>("FormId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("IsModified")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("RespondentEmail")
                         .IsRequired()
                         .HasColumnType("text");
@@ -195,6 +204,9 @@ namespace FeedbackForm.Migrations
 
                     b.Property<DateTime>("SubmittedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -219,6 +231,12 @@ namespace FeedbackForm.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("isModified")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

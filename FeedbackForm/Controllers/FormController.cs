@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/form")]
 public class FormsController(IFormService _formService, IUserService _userService) : ControllerBase
 {
-  
+
 
     [HttpPost]
     public async Task<IActionResult> CreateForm([FromBody] CreateFormRequestDto request)
@@ -36,7 +36,7 @@ public class FormsController(IFormService _formService, IUserService _userServic
     {
         var form = await _formService.GetFormByIdAsync(id);
         if (form == null) return NotFound();
-        var dto = new FormDto(form);  
+        var dto = new FormDto(form);
 
         return Ok(dto);
     }
@@ -45,7 +45,7 @@ public class FormsController(IFormService _formService, IUserService _userServic
     public async Task<IActionResult> GetAllForms()
     {
         var forms = await _formService.GetAllFormsAsync();
-        var result = forms.Select(f => new FormListItemDto(f)); 
+        var result = forms.Select(f => new FormListItemDto(f));
         return Ok(result);
     }
 
@@ -75,24 +75,38 @@ public class FormsController(IFormService _formService, IUserService _userServic
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateForm(Guid id, [FromBody] FormUpdateDto dto)
     {
-        var form = await _formService.GetFormByIdAsync(id);
-        if (form == null)
-            return BadRequest("Form not found.");
+        var updatedResult = await _formService.EditForm(id, dto);
+        if (updatedResult)
+        {
+            return Ok(updatedResult);
+        }
+        return BadRequest("Error while updating the form");
 
-        if (form.Status != FormStatus.Draft)
-            return BadRequest("Form cannot be updated because it is already published or closed.");
-
-        form.UpdateFromDto(dto);
-        var updated = await _formService.UpdateFormAsync(form);
-        var formDto = new FormDto(updated);
-        return Ok(formDto);
     }
 
-
-    [HttpPut("{id}/questions")]
-    public async Task<IActionResult> UpdateFormQuestions(Guid id, [FromBody] List<Question> questions)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteForm(Guid id)
     {
-        var result = await _formService.UpdateFormQuestionsAsync(id, questions);
-        return result ? Ok("Form questions updated successfully.") : BadRequest("Failed to update form questions.");
+        try
+        {
+            var deleted = await _formService.DeleteForm(id);
+            if (!deleted)
+                return NotFound(new { Message = "Form not found or already deleted." });
+            return Ok(new { Message = "Form soft-deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "Internal server error", Error = ex.Message });
+        }
     }
+
+
+
+
+
+
+
+
+
+
 }

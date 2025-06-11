@@ -10,10 +10,8 @@ using FeedbackForm.Services.Interfaces;
 
 namespace FeedbackForm.Services.Implementations
 {
-    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo,IGenericRepository<Answer>_answerRepo,
-        IGenericRepository<Question> _questionRepo,IGenericRepository<Option> _optionRepo,IGenericRepository<AnswerOption> _answerOptionRepo) : IResponseService
+    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo,ApplicationDbContext _applicationDbContext) : IResponseService
     {
-
         public async Task SubmitFormAsync(SubmitFormRequestDto dto)
         {
             var form = await _formRepo.GetSingleAsync(
@@ -23,7 +21,6 @@ namespace FeedbackForm.Services.Implementations
 
             if (form == null)
                 throw new Exception("Form not found.");
-
             var validOptionIds = form.Questions
                 .SelectMany(q => q.Options)
                 .Select(o => o.Id)
@@ -41,7 +38,6 @@ namespace FeedbackForm.Services.Implementations
                     }
                 }
             }
-
             try
             {
                 await _submissionRepo.AddAsync(submission);
@@ -52,11 +48,11 @@ namespace FeedbackForm.Services.Implementations
             }
         }
 
-
         public async Task<List<SubmissionDto>> GetAllSubmissionsAsync()
         {
             var submissions = await _submissionRepo.GetAllAsync();
-            return submissions.Select(s => new SubmissionDto(s)).ToList();
+            var existingSubmissions = submissions.Where(s => !s.isDeleted);
+            return existingSubmissions.Select(s => new SubmissionDto(s)).ToList();
         }
 
         public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
@@ -71,51 +67,24 @@ namespace FeedbackForm.Services.Implementations
                             .ThenInclude(ao => ao.Option)
             );
 
-            if (submission == null)
+            if (submission == null || submission.isDeleted)
                 return null;
 
             return new SubmissionDto(submission);
         }
 
-        //public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
-        //{
-        //    try
-        //    {
-        //        var allSubmissions = await _submissionRepo.GetAllAsync();
-        //        var allAnswers = await _answerRepo.GetAllAsync();
-        //        var allQuestions = await _questionRepo.GetAllAsync();
-        //        var allAnswerOptions = await _answerOptionRepo.GetAllAsync();
-        //        var allOptions = await _optionRepo.GetAllAsync();
-        //        var submission = allSubmissions.FirstOrDefault(s => s.Id == id);
-        //        if (submission == null)
-        //            return null;
-        //        var answers = allAnswers.Where(a => a.SubmissionId == submission.Id).ToList();
-        //        foreach (var answer in answers)
-        //        {
-        //            answer.Question = allQuestions.FirstOrDefault(q => q.Id == answer.QuestionId);
-        //            var answerOptions = allAnswerOptions
-        //                .Where(ao => ao.AnswerId == answer.Id)
-        //                .ToList();
-        //            foreach (var ao in answerOptions)
-        //            {
-        //                ao.Option = allOptions.FirstOrDefault(o => o.Id == ao.OptionId);
-        //            }
-        //            answer.AnswerOptions = answerOptions;
-        //        }
-        //        submission.Answers = answers;
-        //        return new SubmissionDto(submission);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Failed to load submission details. " + ex.Message, ex);
-        //    }
-        //}
+        public async Task<bool> DeleteSubmission(Guid Id)
+        {
+            var submission = await _applicationDbContext.Submissions.FindAsync(Id);
+            if (submission == null || submission.isDeleted)
+                return false;
 
-
-
-
-
-
+            submission.isDeleted = true;
+            submission.IsModified = DateTime.UtcNow;
+            _applicationDbContext.Submissions.Update(submission);
+            await _applicationDbContext.SaveChangesAsync();
+            return true;
+        }
 
     }
 }

@@ -7,5 +7,6 @@ namespace FeedbackForm.Repositories.Interfaces
         Task<Form> AddFormWithQuestionsAsync(Form form, List<Question> questions);
         Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions);
         IQueryable<Form> Query();
+      
     }
 }

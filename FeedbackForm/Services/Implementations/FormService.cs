@@ -1,4 +1,5 @@
-﻿using FeedbackForm.Enum;
+﻿using FeedbackForm.DTOs;
+using FeedbackForm.Enum;
 using FeedbackForm.Models;
 using FeedbackForm.Repositories.Interfaces;
 using FeedbackForm.Services.Interfaces;
@@ -11,14 +12,12 @@ namespace FeedbackForm.Services.Implementations
     {
         private readonly IFormRepository _formRepo;
         private readonly AppSettings _appSettings;
-        private readonly IGenericRepository<Question> _questionRepo;
-        private readonly IGenericRepository<Option> _optionRepo;
-        
-
-        public FormService(IFormRepository formRepo, IOptions<AppSettings> appSettings)
+        private readonly ApplicationDbContext _applicationDbContext;
+        public FormService(IFormRepository formRepo, IOptions<AppSettings> appSettings, ApplicationDbContext applicationDbContext)
         {
             _formRepo = formRepo;
             _appSettings = appSettings.Value;
+            _applicationDbContext = applicationDbContext;
         }
 
         public async Task<Form> CreateFormAsync(Form form)
@@ -34,57 +33,15 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.AddAsync(form);
         }
 
-
         public async Task<Form> CreateFormWithQuestionsAsync(Form form, List<Question> questions)
         {
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
 
-        //public async Task<Form> GetFormByIdAsync(Guid formId)
-        //{
-        //    return await _formRepo.Query()
-        //        .Where(f => f.Id == formId)
-        //        .Select(f => new Form
-        //        {
-        //            Id = f.Id,
-        //            Title = f.Title,
-        //            Description = f.Description,
-        //            Status = f.Status,
-        //            ShareableLink = f.ShareableLink,
-        //            CreatedOn = f.CreatedOn,
-        //            PublishedOn = f.PublishedOn,
-        //            ClosedOn = f.ClosedOn,
-        //            Questions = f.Questions.Select(q => new Question
-        //            {
-        //                Id = q.Id,
-        //                Text = q.Text,
-        //                Type = q.Type,
-        //                IsRequired = q.IsRequired,
-        //                WordLimit = q.WordLimit,
-        //                Options = q.Options.Select(o => new Option
-        //                {
-        //                    Id = o.Id,
-        //                    Text = o.Text,
-        //                    Value = o.Value,
-        //                    Order = o.Order
-        //                }).ToList()
-        //            }).ToList(),
-        //            Submissions = f.Submissions.Select(s => new Submission
-        //            {
-        //                Id = s.Id,
-        //                RespondentName = s.RespondentName,
-        //                RespondentEmail = s.RespondentEmail,
-        //                SubmittedOn = s.SubmittedOn
-        //            }).ToList()
-        //        })
-        //        .FirstOrDefaultAsync();
-        //}
-
         public async Task<Form> GetFormByIdAsync(Guid formId)
         {
-            // Fixing the issue by using the Query() method from IFormRepository instead of the non-existent Table property.
             var form = await _formRepo.Query()
-                .Where(f => f.Id == formId)
+                .Where(f => f.Id == formId && !f.isDeleted)
                 .Include(f => f.Questions)
                 .ThenInclude(q => q.Options)
                 .FirstOrDefaultAsync();
@@ -94,10 +51,12 @@ namespace FeedbackForm.Services.Implementations
 
         public async Task<IEnumerable<Form>> GetAllFormsAsync()
         {
-            return await _formRepo.GetAllAsync(
+            var forms = await _formRepo.GetAllAsync(
                 f => f.Questions,
                 f => f.Submissions
             );
+
+            return forms.Where(f => !f.isDeleted);
         }
 
         public async Task<Form> UpdateFormAsync(Form form)
@@ -117,7 +76,6 @@ namespace FeedbackForm.Services.Implementations
             return true;
         }
 
-
         public async Task<bool> CloseFormAsync(Guid formId)
         {
             var form = await _formRepo.GetByIdAsync(formId);
@@ -129,11 +87,43 @@ namespace FeedbackForm.Services.Implementations
             return true;
         }
 
-        public async Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions)
+        public async Task<bool> EditForm(Guid id, FormUpdateDto formdto)
         {
-            return await _formRepo.UpdateFormQuestionsAsync(formId, questions);
+            var form = _applicationDbContext.Forms
+                .Include(f => f.Questions)
+                .SingleOrDefault(f => f.Id == id);
+            if (form == null)
+                return false;
+            form.Title = formdto.Title;
+            form.Description = formdto.Description;
+            foreach (var questionInfo in formdto.Questions)
+            {
+                var question = form.Questions.SingleOrDefault(q => q.Id == questionInfo.Id);
+                if (question != null)
+                {
+                    question.Text = questionInfo.Text;
+                    question.WordLimit = questionInfo.WordLimit;
+                    question.IsRequired = questionInfo.IsRequired;
+                    question.Order = questionInfo.Order;
+
+                }
+            }
+
+            await _applicationDbContext.SaveChangesAsync();
+            return true;
         }
+     
 
-
+        public async Task<bool> DeleteForm(Guid formId)
+        {
+            var form = await _applicationDbContext.Forms.FindAsync(formId);
+            if (form == null || form.isDeleted)
+                return false;
+            form.isDeleted = true;
+            form.isModified = DateTime.UtcNow;
+            _applicationDbContext.Forms.Update(form);
+            await _applicationDbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

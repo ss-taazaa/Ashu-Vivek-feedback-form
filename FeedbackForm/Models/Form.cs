@@ -14,7 +14,8 @@ namespace FeedbackForm.Models
         public DateTime? PublishedOn { get; set; }
         public DateTime? ClosedOn { get; set; }
         public string ShareableLink { get; set; }
-
+        public bool isDeleted { get; set; }
+        public DateTime isModified { get; set; } = new DateTime();
         public Guid UserId { get; set; }
         public User User { get; set; }
 
@@ -33,6 +34,7 @@ namespace FeedbackForm.Models
             ClosedOn = closedOn;
             ShareableLink = shareableLink;
             UserId = userId;
+          
         }
 
         public Form(CreateFormRequestDto request)
@@ -62,33 +64,5 @@ namespace FeedbackForm.Models
                 }).ToList()
             }).ToList();
         }
-
-
-        public void UpdateFromDto(FormUpdateDto dto)
-        {
-            Title = dto.Title;
-            Description = dto.Description;
-            Status = (FormStatus)dto.Status;
-            //PublishedOn = dto.PublishedOn;
-            //ClosedOn = dto.ClosedOn;
-            //ShareableLink = dto.ShareableLink;
-            //Questions = dto.Questions?.Select(q => new Question
-            //{
-                
-            //    Text = q.Text,
-            //    Type = q.Type,
-            //    WordLimit = q.WordLimit ?? 0,
-            //    IsRequired = q.IsRequired,
-            //    Order = q.Order,
-            //    Options = q.Options?.Select(o => new Option
-            //    {
-            //        Text = o.Text,
-            //        Value = o.Value,
-            //        Order = o.Order
-            //    }).ToList()
-            //}).ToList() ?? new List<Question>();
-
-        }
-
     }
 }

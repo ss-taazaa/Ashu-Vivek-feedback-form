@@ -14,8 +14,8 @@ namespace FeedbackForm.AppConfiguration
             builder.Property(a => a.TextAnswer)
                    .HasMaxLength(1000);
             builder.Property(a => a.TextAnswer)
-       .HasColumnName("TextAnswer")
-       .IsRequired(false);
+                   .HasColumnName("TextAnswer")
+                   .IsRequired(false);
             builder.Property(a => a.RatingValue);
 
             builder.Property(a => a.Ranking);
