@@ -6,7 +6,8 @@ public class FormConfiguration : IEntityTypeConfiguration<Form>
 {
     public void Configure(EntityTypeBuilder<Form> builder)
     {
-        builder.ToTable("Forms");
+
+  builder.ToTable("Forms");
 
         builder.HasKey(f => f.Id);
 
@@ -50,5 +51,6 @@ public class FormConfiguration : IEntityTypeConfiguration<Form>
         builder.HasOne(f => f.User)
                .WithMany(u => u.Forms)
                .HasForeignKey(f => f.UserId);
+
     }
 }

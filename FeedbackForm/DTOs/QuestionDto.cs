@@ -22,6 +22,14 @@ public class QuestionDto
         WordLimit = question.WordLimit;
         IsRequired = question.IsRequired;
         Order = question.Order;
-        Options = question.Options?.Select(o => new OptionDto(o)).ToList();
+        Options = question.Options?.Select(o => new OptionDto(o, question.Type)).ToList();
+
+        if (Type == QuestionType.SingleChoice || Type == QuestionType.MultiChoice)
+        {
+            foreach (var option in Options)
+            {
+                option.Value = null;
+            }
+        }
     }
 }

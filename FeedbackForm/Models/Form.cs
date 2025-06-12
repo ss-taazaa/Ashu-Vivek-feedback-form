@@ -61,5 +61,17 @@ namespace FeedbackForm.Models
                 }).ToList()
             }).ToList();
         }
+
+
+
+        public void UpdateFromDto(FormUpdateDto dto)
+        {
+            Title = dto.Title;
+            Description = dto.Description;
+            Status = (FormStatus)dto.Status;
+
+        }
+
+
     }
 }
