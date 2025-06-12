@@ -137,5 +137,25 @@ namespace FeedbackForm.Services.Implementations
         {
             return await _formRepo.FindAsync(f => f.UserId == userId && !f.isDeleted, f => f.Questions, f => f.Submissions);
         }
+
+
+
+        public async Task<PagedResult<FormDto>> GetFormsAsync(FormFilterDto filter)
+        {
+            var (forms, totalCount) = await _formRepo.GetFilteredFormsAsync(filter);
+
+            var formDtos = forms.Select(f => new FormDto(f)).ToList();
+
+            return new PagedResult<FormDto>
+            {
+                Items = formDtos,
+                TotalCount = totalCount,
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
+            };
+        }
+
+
+
     }
 }
