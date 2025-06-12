@@ -1,4 +1,5 @@
-﻿using FeedbackForm.Models;
+﻿using FeedbackForm.DTOs;
+using FeedbackForm.Models;
 
 namespace FeedbackForm.Services.Interfaces
 {
@@ -6,10 +7,15 @@ namespace FeedbackForm.Services.Interfaces
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User> GetUserById(Guid id);
-        Task<User> CreateUserAsync(User user);
+        //Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(Guid id, User user);
         Task<bool> DeleteUserAsync(Guid id);
-       
+        Task<User> RegisterAsync(UserCreateDto dto);
+        Task<string?> LoginAsync(string email, string password);
+        Task LogoutAsync(Guid userId);
+        //Task<User?> GetUserByEmail(string email);
+
+
 
     }
 }

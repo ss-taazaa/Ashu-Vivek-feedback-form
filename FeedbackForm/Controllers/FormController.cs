@@ -1,10 +1,12 @@
 ﻿using FeedbackForm.DTOs;
 using FeedbackForm.Enum;
 using FeedbackForm.Helper;
+using Microsoft.AspNetCore.Authorization;
 using FeedbackForm.Models;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
 [ApiController]
 [Route("api/form")]
 public class FormsController(IFormService _formService, IUserService _userService) : ControllerBase

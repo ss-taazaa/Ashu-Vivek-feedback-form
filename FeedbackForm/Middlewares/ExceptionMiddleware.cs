@@ -31,11 +31,42 @@ namespace FeedbackForm.Middlewares
             }
         }
 
+        //private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        //{
+        //    context.Response.ContentType = "application/json";
+        //    HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
+        //    string userMessage = "An unexpected error occurred. Please try again later.";
+        //    if (exception is ArgumentNullException || exception is ArgumentException)
+        //    {
+        //        statusCode = HttpStatusCode.BadRequest;
+        //        userMessage = "Invalid input provided.";
+        //    }
+        //    else if (exception is KeyNotFoundException)
+        //    {
+        //        statusCode = HttpStatusCode.NotFound;
+        //        userMessage = "Requested resource was not found.";
+        //    }
+        //    context.Response.StatusCode = (int)statusCode;
+        //    var response = new
+        //    {
+        //        StatusCode = (int)statusCode,
+        //        Message = userMessage
+        //    };
+        //    var json = JsonSerializer.Serialize(response);
+        //    return context.Response.WriteAsync(json);
+        //}
+
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
             string userMessage = "An unexpected error occurred. Please try again later.";
+
+            Console.WriteLine("🔴 Exception caught by middleware:");
+            Console.WriteLine($"Type: {exception.GetType().Name}");
+            Console.WriteLine($"Message: {exception.Message}");
+            Console.WriteLine($"StackTrace: {exception.StackTrace}");
+
             if (exception is ArgumentNullException || exception is ArgumentException)
             {
                 statusCode = HttpStatusCode.BadRequest;
@@ -46,14 +77,17 @@ namespace FeedbackForm.Middlewares
                 statusCode = HttpStatusCode.NotFound;
                 userMessage = "Requested resource was not found.";
             }
+
             context.Response.StatusCode = (int)statusCode;
             var response = new
             {
                 StatusCode = (int)statusCode,
-                Message = userMessage
+                Message = userMessage,
+                Detail = exception.Message // Optional: helpful for debugging
             };
             var json = JsonSerializer.Serialize(response);
             return context.Response.WriteAsync(json);
         }
+
     }
 }

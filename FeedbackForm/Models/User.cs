@@ -8,6 +8,9 @@ namespace FeedbackForm.Models
     {
         public string Name { get; set; }
         public string Email { get; set; }
+        public string Password { get; set; }
+        public int IsActive { get; set; }
+
         public DateTime CreatedOn { get; set; }
 
         public ICollection<Form> Forms { get; set; } = new List<Form>();
@@ -27,7 +30,9 @@ namespace FeedbackForm.Models
             Id = Guid.NewGuid(); 
             Name = dto.Name;
             Email = dto.Email;
+            Password = dto.Password;
             CreatedOn = DateTime.UtcNow;
+            IsActive = 1;
         }
 
     }
