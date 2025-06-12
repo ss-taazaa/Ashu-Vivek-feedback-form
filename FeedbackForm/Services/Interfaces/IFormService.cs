@@ -15,5 +15,8 @@ namespace FeedbackForm.Services.Interfaces
         Task<bool> CloseFormAsync(Guid formId);
         Task<bool> EditForm(Guid formId, FormUpdateDto form);
         Task<bool> DeleteForm(Guid id);
+        Task<IEnumerable<Form>> GetFormsByUserIdAsync(Guid userId);
+        Task<PagedResult<FormDto>> GetFormsAsync(FormFilterDto filter);
+
     }
 }

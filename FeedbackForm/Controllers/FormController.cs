@@ -42,13 +42,11 @@ public class FormsController(IFormService _formService, IUserService _userServic
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllForms()
+    public async Task<IActionResult> GetAllForms([FromQuery] FormFilterDto filter)
     {
-        var forms = await _formService.GetAllFormsAsync();
-        var result = forms.Select(f => new FormListItemDto(f));
+        var result = await _formService.GetFormsAsync(filter);
         return Ok(result);
     }
-
 
 
     [HttpPut("{id}/status")]
@@ -68,9 +66,6 @@ public class FormsController(IFormService _formService, IUserService _userServic
         }
         return result ? Ok($"Form status updated to '{status}'.") : BadRequest("Unable to update form status.");
     }
-
-
-
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateForm(Guid id, [FromBody] FormUpdateDto dto)
@@ -101,12 +96,20 @@ public class FormsController(IFormService _formService, IUserService _userServic
     }
 
 
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetFormsByUserId(Guid userId)
+    {
+        var user = await _userService.GetUserById(userId);
+        if (user == null)
+            return NotFound(new ApiResponseDto { Success = false, Message = "User not found." });
 
+        var forms = await _formService.GetFormsByUserIdAsync(userId);
+        var result = forms
+            .Where(f => !f.isDeleted)
+            .Select(f => new FormListItemDto(f))
+            .ToList();
 
-
-
-
-
-
+        return Ok(result);
+    }
 
 }
