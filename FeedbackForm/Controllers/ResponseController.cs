@@ -10,7 +10,7 @@ using FeedbackForm.Services.Implementations;
 namespace FeedbackForm.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/response")]
     public class ResponseController(IResponseService _responseService) : ControllerBase
     {
        
@@ -59,8 +59,11 @@ namespace FeedbackForm.Controllers
         {
             try
             {
-                var deleted = await _responseService.DeleteSubmission(id);
-                if (!deleted)
+
+
+                var deletedSubmission = await _responseService.DeleteSubmission(id);
+                if (!deletedSubmission)
+
                     return NotFound(new { Message = "Submission not found or already deleted." });
                 return Ok(new { Message = "Submission soft-deleted successfully." });
             }

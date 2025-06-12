@@ -11,9 +11,10 @@ using FeedbackForm.Services.Interfaces;
 namespace FeedbackForm.Services.Implementations
 
 {
-    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo, ApplicationDbContext _applicationDbContext) : IResponseService
-    {
 
+    public class ResponseService(IGenericRepository<Form> _formRepo, IGenericRepository<Submission> _submissionRepo,ApplicationDbContext _applicationDbContext) : IResponseService
+
+    {
         public async Task SubmitFormAsync(SubmitFormRequestDto dto)
         {
             var form = await _formRepo.GetSingleAsync(
@@ -23,7 +24,6 @@ namespace FeedbackForm.Services.Implementations
 
             if (form == null)
                 throw new Exception("Form not found.");
-
             var validOptionIds = form.Questions
                 .SelectMany(q => q.Options)
                 .Select(o => o.Id)
@@ -41,7 +41,6 @@ namespace FeedbackForm.Services.Implementations
                     }
                 }
             }
-
             try
             {
                 await _submissionRepo.AddAsync(submission);
@@ -52,12 +51,12 @@ namespace FeedbackForm.Services.Implementations
             }
         }
 
-
         public async Task<List<SubmissionDto>> GetAllSubmissionsAsync()
         {
             var submissions = await _submissionRepo.GetAllAsync();
-            var Existingsubmission = submissions.Where(s => !s.isDeleted);
-            return Existingsubmission.Select(s => new SubmissionDto(s)).ToList();
+
+            var existingSubmissions = submissions.Where(s => !s.isDeleted);
+            return existingSubmissions.Select(s => new SubmissionDto(s)).ToList();
         }
 
         public async Task<SubmissionDto> GetSubmissionByIdAsync(Guid id)
@@ -72,12 +71,11 @@ namespace FeedbackForm.Services.Implementations
                             .ThenInclude(ao => ao.Option)
             );
             if (submission == null ||  submission.isDeleted)
+
                 return null;
 
             return new SubmissionDto(submission);
         }
-
-
         public async Task<bool> DeleteSubmission(Guid Id)
         {
             var submission = await _applicationDbContext.Submissions.FindAsync(Id);
@@ -86,15 +84,10 @@ namespace FeedbackForm.Services.Implementations
 
             submission.isDeleted = true;
             submission.isModified = DateTime.UtcNow;
-
             _applicationDbContext.Submissions.Update(submission);
             await _applicationDbContext.SaveChangesAsync();
             return true;
         }
-
-
-       
-
 
     }
 }

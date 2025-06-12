@@ -49,7 +49,7 @@ namespace FeedbackForm.Repositories.Implementations
             return entity;
         }
 
-      
+
         public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
@@ -62,6 +62,7 @@ namespace FeedbackForm.Repositories.Implementations
             _dbSet.Remove(entity);
             _context.SaveChanges();
         }
+
         public async Task<bool> DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);
@@ -92,19 +93,16 @@ namespace FeedbackForm.Repositories.Implementations
             return await query.FirstOrDefaultAsync(predicate);
         }
 
-        public async Task AddRangeAsync(IEnumerable<T> entities)
-        {
-            await _dbSet.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
-        }
 
-        public void RemoveRange(IEnumerable<T> entities)
+        public IQueryable<T> Query()
         {
-            _dbSet.RemoveRange(entities);
-            _context.SaveChanges();
+            return _dbSet.AsQueryable();
         }
 
 
-
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
     }
 }

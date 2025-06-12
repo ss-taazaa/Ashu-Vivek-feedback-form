@@ -9,7 +9,8 @@ namespace FeedbackForm.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public DateTime CreatedOn { get; set; }
-
+        public bool isDeleted { get; set; }
+        public DateTime? isModified { get; set; } = null;
         public ICollection<Form> Forms { get; set; } = new List<Form>();
 
         public User() { }

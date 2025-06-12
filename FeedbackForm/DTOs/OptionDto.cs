@@ -13,8 +13,8 @@ namespace FeedbackForm.DTOs
         public int? Value { get; set; }
         public int Order { get; set; }
 
-      
-        public OptionDto(Option option, QuestionType questionType)
+        public OptionDto(Option option)
+
         {
             Id = option.Id;
             Text = option.Text;

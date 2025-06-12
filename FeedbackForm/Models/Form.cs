@@ -14,18 +14,13 @@ namespace FeedbackForm.Models
         public DateTime? PublishedOn { get; set; }
         public DateTime? ClosedOn { get; set; }
         public string ShareableLink { get; set; }
-
-        public bool isDeleted{get; set;}
-        public DateTime isModified { get; set;}
-
+        public bool isDeleted { get; set; }
+        public DateTime? isModified { get; set; } = null;
         public Guid UserId { get; set; }
         public User User { get; set; }
-
         public ICollection<Question> Questions { get; set; } = new List<Question>();
         public ICollection<Submission> Submissions { get; set; } = new List<Submission>();
-
         public Form() { }
-
         public Form(string title, string description, FormStatus status, DateTime createdOn, DateTime? publishedOn, DateTime? closedOn, string shareableLink, Guid userId)
         {
             Title = title;
@@ -36,6 +31,7 @@ namespace FeedbackForm.Models
             ClosedOn = closedOn;
             ShareableLink = shareableLink;
             UserId = userId;
+          
         }
 
         public Form(CreateFormRequestDto request)
@@ -67,6 +63,7 @@ namespace FeedbackForm.Models
         }
 
 
+
         public void UpdateFromDto(FormUpdateDto dto)
         {
             Title = dto.Title;
@@ -74,6 +71,7 @@ namespace FeedbackForm.Models
             Status = (FormStatus)dto.Status;
 
         }
+
 
     }
 }

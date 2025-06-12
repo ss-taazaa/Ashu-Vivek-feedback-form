@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedbackForm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250611070903_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,9 +114,7 @@ namespace FeedbackForm.Migrations
                     b.Property<bool>("isDeleted")
                         .HasColumnType("boolean");
 
-
-                    b.Property<DateTime>("isModified")
-
+                    b.Property<DateTime?>("isModified")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -206,11 +207,6 @@ namespace FeedbackForm.Migrations
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("boolean");
-
-
-                    b.Property<DateTime>("isModified")
-                        .HasColumnType("timestamp with time zone");
-
 
                     b.HasKey("Id");
 

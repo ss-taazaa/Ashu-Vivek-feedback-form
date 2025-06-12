@@ -9,8 +9,11 @@
         public bool isDeleted { get; set; }
         public DateTime isModified { get; set; }
 
-        public string RespondentName { get; set; }
-        public string RespondentEmail { get; set; }
+
+        public string RespondentName { get; set; }         
+        public string RespondentEmail { get; set; }        
+        public bool isDeleted { get; set; }
+        public DateTime? IsModified { get; set; } = null;
 
         public ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
@@ -56,9 +59,6 @@
                 return answer;
             }).ToList() ?? new List<Answer>();
         }
-
-
-
 
     }
 }

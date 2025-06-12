@@ -1,5 +1,6 @@
-﻿using System;
+﻿using FeedbackForm.DTOs;
 using FeedbackForm.Models;
+using System;
 
 namespace FeedbackForm.Services.Interfaces
 {
@@ -13,7 +14,11 @@ namespace FeedbackForm.Services.Interfaces
         Task<bool> PublishFormAsync(Guid formId);
         Task<bool> CloseFormAsync(Guid formId);
 
-        Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> questions);
+        Task<bool> EditForm(Guid formId, FormUpdateDto form);
         Task<bool> DeleteForm(Guid id);
+        Task<IEnumerable<Form>> GetFormsByUserIdAsync(Guid userId);
+        Task<PagedResult<FormDto>> GetFormsAsync(FormFilterDto filter);
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using FeedbackForm.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FeedbackForm.Repositories.Interfaces
 {
@@ -11,12 +12,11 @@ namespace FeedbackForm.Repositories.Interfaces
         Task<T> AddAsync(T entity);
         Task<T> UpdateAsync(T entity);
         void Remove(T entity);
-        void RemoveRange(IEnumerable<T> entities);
-        Task AddRangeAsync(IEnumerable<T> entities);
         IQueryable<T> GetQueryable();
         Task<T?> GetSingleAsync(
             Expression<Func<T, bool>> predicate,
             Func<IQueryable<T>, IQueryable<T>>? include = null);
-       
+        IQueryable<T> Query();
+        Task<int> SaveChangesAsync();
     }
 }

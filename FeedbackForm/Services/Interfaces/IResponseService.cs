@@ -10,6 +10,8 @@ namespace FeedbackForm.Services.Interfaces
         Task SubmitFormAsync(SubmitFormRequestDto dto);
         Task<List<SubmissionDto>> GetAllSubmissionsAsync();
         Task<SubmissionDto?> GetSubmissionByIdAsync(Guid id);
-        Task<bool> DeleteSubmission(Guid id);
+
+        Task<bool> DeleteSubmission(Guid Id);
+
     }
 }
