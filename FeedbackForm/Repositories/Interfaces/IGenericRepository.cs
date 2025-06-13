@@ -17,6 +17,8 @@ namespace FeedbackForm.Repositories.Interfaces
         Task<T?> GetSingleAsync(
             Expression<Func<T, bool>> predicate,
             Func<IQueryable<T>, IQueryable<T>>? include = null);
-       
+        void SaveChanges();
+
+
     }
 }

@@ -13,6 +13,7 @@ namespace FeedbackForm.Services.Interfaces
         Task<User> RegisterAsync(UserCreateDto dto);
         Task<string?> LoginAsync(string email, string password);
         Task LogoutAsync(Guid userId);
+        Task<User?> GetUserByEmailAsync(string email);
 
 
 

@@ -40,51 +40,11 @@ namespace FeedbackForm.Services.Implementations
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
 
-        //public async Task<Form> GetFormByIdAsync(Guid formId)
-        //{
-        //    return await _formRepo.Query()
-        //        .Where(f => f.Id == formId)
-        //        .Select(f => new Form
-        //        {
-        //            Id = f.Id,
-        //            Title = f.Title,
-        //            Description = f.Description,
-        //            Status = f.Status,
-        //            ShareableLink = f.ShareableLink,
-        //            CreatedOn = f.CreatedOn,
-        //            PublishedOn = f.PublishedOn,
-        //            ClosedOn = f.ClosedOn,
-        //            Questions = f.Questions.Select(q => new Question
-        //            {
-        //                Id = q.Id,
-        //                Text = q.Text,
-        //                Type = q.Type,
-        //                IsRequired = q.IsRequired,
-        //                WordLimit = q.WordLimit,
-        //                Options = q.Options.Select(o => new Option
-        //                {
-        //                    Id = o.Id,
-        //                    Text = o.Text,
-        //                    Value = o.Value,
-        //                    Order = o.Order
-        //                }).ToList()
-        //            }).ToList(),
-        //            Submissions = f.Submissions.Select(s => new Submission
-        //            {
-        //                Id = s.Id,
-        //                RespondentName = s.RespondentName,
-        //                RespondentEmail = s.RespondentEmail,
-        //                SubmittedOn = s.SubmittedOn
-        //            }).ToList()
-        //        })
-        //        .FirstOrDefaultAsync();
-        //}
 
         public async Task<Form> GetFormByIdAsync(Guid formId)
         {
-            // Fixing the issue by using the Query() method from IFormRepository instead of the non-existent Table property.
             var form = await _formRepo.Query()
-                .Where(f => f.Id == formId)
+                .Where(f => f.Id == formId && f.Status != FormStatus.Closed)
                 .Include(f => f.Questions)
                 .ThenInclude(q => q.Options)
                 .FirstOrDefaultAsync();

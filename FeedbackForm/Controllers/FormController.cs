@@ -5,25 +5,32 @@ using Microsoft.AspNetCore.Authorization;
 using FeedbackForm.Models;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/form")]
 public class FormsController(IFormService _formService, IUserService _userService) : ControllerBase
 {
-  
 
     [HttpPost]
     public async Task<IActionResult> CreateForm([FromBody] CreateFormRequestDto request)
     {
-        var user = await _userService.GetUserById(request.UserId);
-        if (user == null)
-            return NotFound(new ApiResponseDto { Success = false, Message = "User not found." });
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized(new ApiResponseDto { Success = false, Message = "User email not found in token." });
+        var user = await _userService.GetUserByEmailAsync(email);
+        //if (user == null || !user.IsActive)
+        //    return Unauthorized(new ApiResponseDto { Success = false, Message = "Inactive or non-existent user." });
         try
         {
-            if (!Utils.ValidateQuestions(request).Success)
+            var validationResult = Utils.ValidateQuestions(request);
+            if (!validationResult.Success)
                 return BadRequest(new ApiResponseDto { Success = false, Message = "Invalid questions format." });
-            var form = new Form(request);
+            var form = new Form(request)
+            {
+                UserId = user.Id  
+            };
             await _formService.CreateFormAsync(form);
             return Ok(new ApiResponseDto { Success = true, Message = "Form created successfully." });
         }
@@ -32,6 +39,7 @@ public class FormsController(IFormService _formService, IUserService _userServic
             return BadRequest(new ApiResponseDto { Success = false, Message = "Failed to create form." });
         }
     }
+
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetFormById(Guid id)

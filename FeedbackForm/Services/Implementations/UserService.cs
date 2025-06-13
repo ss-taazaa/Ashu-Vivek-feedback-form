@@ -17,7 +17,7 @@ namespace FeedbackForm.Services.Implementations
 
             var user = new User(dto);
             user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password); 
-            user.IsActive = 1; // enforce active
+            user.IsActive = 1;
 
             return await _userRepository.AddAsync(user);
         }
@@ -25,47 +25,47 @@ namespace FeedbackForm.Services.Implementations
 
         public async Task<string?> LoginAsync(string email, string password)
         {
-            Console.WriteLine($"🔍 Attempting login for: {email}");
+            Console.WriteLine($"Attempting login for: {email}");
 
             try
             {
                 var user = await _userRepository.GetQueryable().FirstOrDefaultAsync(u => u.Email == email);
                 if (user == null)
                 {
-                    Console.WriteLine("❌ User not found.");
+                    Console.WriteLine("User not found.");
                     return null;
                 }
 
-                Console.WriteLine("✅ User found. Checking password...");
+                Console.WriteLine("User found. Checking password...");
                 Console.WriteLine($"Stored hash: {user.Password}");
 
                 var isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
-                Console.WriteLine($"🔑 Password match: {isPasswordValid}");
+                Console.WriteLine($"Password match: {isPasswordValid}");
 
                 if (!isPasswordValid)
                 {
-                    Console.WriteLine("❌ Password mismatch.");
+                    Console.WriteLine("Password mismatch.");
                     return null;
                 }
 
-                Console.WriteLine("🔐 Generating token...");
+                Console.WriteLine("Generating token...");
                 var token = _jwtHelper.GenerateToken(user);
-                Console.WriteLine("✅ Token generated.");
-
+                Console.WriteLine("Token generated.");
+                user.IsActive = 1;
+                _userRepository.SaveChanges();
                 return token;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"🔥 Exception in LoginAsync: {ex.GetType().Name} - {ex.Message}");
+                Console.WriteLine($"Exception in LoginAsync: {ex.GetType().Name} - {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
-                throw; // Re-throw so your middleware still handles it
+                throw;
             }
         }
 
 
         public async Task LogoutAsync(Guid userId)
         {
-            // Example: Set IsActive = 0 or clear session/token
             var user = await _userRepository.GetByIdAsync(userId);
             if (user != null)
             {
@@ -109,6 +109,11 @@ namespace FeedbackForm.Services.Implementations
             }
             _userRepository.Remove(existingUser);
             return true;
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userRepository.GetSingleAsync(u => u.Email == email);
         }
 
 

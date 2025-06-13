@@ -104,6 +104,11 @@ namespace FeedbackForm.Repositories.Implementations
             _context.SaveChanges();
         }
 
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
+
+        }
 
 
     }

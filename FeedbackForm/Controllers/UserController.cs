@@ -39,13 +39,13 @@ namespace FeedbackForm.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
-            Console.WriteLine("🔍 Raw DTO values:");
+            Console.WriteLine("Raw DTO values:");
             Console.WriteLine($"Email: {dto?.Email ?? "null"}");
             Console.WriteLine($"Password: {dto?.Password ?? "null"}");
 
             if (!ModelState.IsValid || string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
             {
-                Console.WriteLine("❌ Model state invalid or missing data.");
+                Console.WriteLine("Model state invalid or missing data.");
                 return BadRequest(new { Message = "Invalid input provided." });
             }
 
@@ -53,11 +53,11 @@ namespace FeedbackForm.Controllers
 
             if (token == null)
             {
-                Console.WriteLine("❌ Login failed — null token.");
+                Console.WriteLine("Login failed — null token.");
                 return BadRequest(new { Message = "Invalid email or password." });
             }
 
-            Console.WriteLine("✅ Login success.");
+            Console.WriteLine("Login success.");
             return Ok(new { Token = token });
         }
 
