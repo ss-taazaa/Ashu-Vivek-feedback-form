@@ -12,6 +12,11 @@ namespace FeedbackForm.Services.Interfaces
         Task<User> UpdateUserAsync(Guid id, User user);
         Task<ApiResponseDto> DeleteUserAsync(Guid id);
         Task<User?> GetUserByEmailAsync(string email);
+        Task<User> RegisterAsync(UserCreateDto dto);
+        Task<ApiResponseDto> LoginAsync(string email, string password);
+        Task LogoutAsync(Guid userId);
+
+
 
     }
 }

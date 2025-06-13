@@ -32,7 +32,6 @@ namespace FeedbackForm.Services.Implementations
                     form.ShareableLink = $"{_appSettings.BaseUrl}/api/form/{form.Id}";
                 }
             }
-            //var checkUserExistence= await _userService.GetUserByEmailAsync(form.)
             return await _formRepo.AddAsync(form);
         }
 
@@ -40,6 +39,7 @@ namespace FeedbackForm.Services.Implementations
         {
             return await _formRepo.AddFormWithQuestionsAsync(form, questions);
         }
+
 
         public async Task<Form> GetFormByIdAsync(Guid formId)
         {
@@ -49,7 +49,6 @@ namespace FeedbackForm.Services.Implementations
                 .Include(f => f.Questions)
                 .ThenInclude(q => q.Options)
                 .FirstOrDefaultAsync();
-
             return form;
         }
 
@@ -59,7 +58,6 @@ namespace FeedbackForm.Services.Implementations
                 f => f.Questions,
                 f => f.Submissions
             );
-
             return forms.Where(f => !f.isDeleted);
         }
 
@@ -67,6 +65,14 @@ namespace FeedbackForm.Services.Implementations
         {
             return await _formRepo.UpdateAsync(form);
         }
+
+
+
+
+
+
+
+
 
         public async Task<bool> PublishFormAsync(Guid formId)
         {
@@ -143,8 +149,8 @@ namespace FeedbackForm.Services.Implementations
         public async Task<PagedResult<FormDto>> GetFormsAsync(FormFilterDto filter)
         {
             var (forms, totalCount) = await _formRepo.GetFilteredFormsAsync(filter);
-
-            var formDtos = forms.Select(f => new FormDto(f)).ToList();
+            var activeForms = forms.Where(f => !f.isDeleted).ToList();
+            var formDtos = activeForms.Select(f => new FormDto(f)).ToList();
 
             return new PagedResult<FormDto>
             {

@@ -104,5 +104,11 @@ namespace FeedbackForm.Repositories.Implementations
         {
             return await _context.SaveChangesAsync();
         }
+
+
+        public async void SaveChanges()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

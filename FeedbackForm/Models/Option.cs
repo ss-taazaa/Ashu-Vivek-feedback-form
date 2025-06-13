@@ -9,7 +9,7 @@
         public int? Value { get; set; } 
         public int Order { get; set; }
 
-        public ICollection<AnswerOption> AnswerOptions { get; set; } = new List<AnswerOption>();
+        public ICollection<AnswerOption>? AnswerOptions { get; set; }= new List<AnswerOption>();
 
         public Option() { }
 

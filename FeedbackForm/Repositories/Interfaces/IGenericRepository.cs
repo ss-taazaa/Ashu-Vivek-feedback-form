@@ -18,5 +18,7 @@ namespace FeedbackForm.Repositories.Interfaces
             Func<IQueryable<T>, IQueryable<T>>? include = null);
         IQueryable<T> Query();
         Task<int> SaveChangesAsync();
+
+        void SaveChanges();
     }
 }
