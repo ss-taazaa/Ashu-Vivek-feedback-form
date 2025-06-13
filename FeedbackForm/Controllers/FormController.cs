@@ -112,4 +112,21 @@ public class FormsController(IFormService _formService, IUserService _userServic
         return Ok(result);
     }
 
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteForm(Guid id)
+    {
+        try
+        {
+            var deleted = await _formService.DeleteForm(id);
+            if (!deleted)
+                return NotFound(new { Message = "Form not found or already deleted." });
+            return Ok(new { Message = "Form soft-deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "Internal server error", Error = ex.Message });
+        }
+    }
+
 }

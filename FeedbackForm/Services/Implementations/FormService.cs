@@ -12,6 +12,7 @@ namespace FeedbackForm.Services.Implementations
     public class FormService : IFormService
     {
         private readonly IFormRepository _formRepo;
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly AppSettings _appSettings;
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUserService _userService;
@@ -160,7 +161,6 @@ namespace FeedbackForm.Services.Implementations
                 PageSize = filter.PageSize
             };
         }
-
 
 
     }

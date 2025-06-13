@@ -37,6 +37,7 @@ namespace FeedbackForm.DTOs
 
 
         public OptionDto(Option option, QuestionType questionType)
+
         {
             Id = option.Id;
             Text = option.Text;
