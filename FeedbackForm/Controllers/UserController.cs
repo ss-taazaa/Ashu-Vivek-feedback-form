@@ -36,21 +36,6 @@ namespace FeedbackForm.Controllers
         }
 
 
-        //[HttpPost("login")]
-        //public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
-        //{
-        //    var emailValidation = Utils.EmailValidator(dto.Email);
-        //    if (!emailValidation.Success || string.IsNullOrWhiteSpace(dto.Password))
-        //    {
-        //        return BadRequest("Email or password is invalid.");
-        //    }
-
-        //    var token = await _userService.LoginAsync(dto.Email, dto.Password);
-        //    if (token == null)
-        //        return Unauthorized("Invalid credentials.");
-
-        //    return Ok(new { Token = token });
-        //}
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
@@ -75,18 +60,6 @@ namespace FeedbackForm.Controllers
             Console.WriteLine("✅ Login success.");
             return Ok(new { Token = token });
         }
-
-
-
-
-        [Authorize]
-        [HttpGet("me")]
-        public IActionResult GetCurrentUser()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok($"You are authenticated. Your ID is {userId}");
-        }
-
 
         [HttpPost("{id}/logout")]
         public async Task<IActionResult> Logout(Guid id)
@@ -116,26 +89,6 @@ namespace FeedbackForm.Controllers
         }
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
-        //{
-        //    if (!Utils.NameValidator(userCreateDto.Name).Success || !Utils.EmailValidator(userCreateDto.Email).Success)
-        //    {
-        //       return BadRequest("Invalid user data.");
-        //    }
-        //    try
-        //    {
-        //        var user = new User(userCreateDto);
-        //        await _userService.CreateUserAsync(user);
-        //        return Ok("User has been successfully created.");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return BadRequest("Failed to create user.");
-        //    }
-        //}
-
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserCreateDto userCreateDto)
         {
@@ -163,23 +116,8 @@ namespace FeedbackForm.Controllers
                 return NotFound();
             }
             return NoContent();
+
+
         }
-
-        //[HttpGet("debug-user/{email}")]
-        //public async Task<IActionResult> GetUserByEmail(string email)
-        //{
-        //    var user = await _userService.GetUserByEmail(email);
-        //    if (user == null)
-        //        return NotFound();
-
-        //    return Ok(user);
-        //}
-
-        [HttpPost("test-dto")]
-        public IActionResult TestDtoBinding([FromBody] UserLoginDto dto)
-        {
-            return Ok(new { Email = dto.Email, Password = dto.Password });
-        }
-
     }
 }

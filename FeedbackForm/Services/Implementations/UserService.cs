@@ -23,27 +23,6 @@ namespace FeedbackForm.Services.Implementations
         }
 
 
-
-        //public async Task<string?> LoginAsync(string email, string password)
-        //{
-        //    var user = await _userRepository.GetQueryable().FirstOrDefaultAsync(u => u.Email == email);
-        //    if (user == null)
-        //    {
-        //        Console.WriteLine("User not found.");
-        //        return null;
-        //    }
-
-        //    var isMatch = BCrypt.Net.BCrypt.Verify(password, user.Password);
-        //    if (!isMatch)
-        //    {
-        //        Console.WriteLine("Password mismatch.");
-        //        return null;
-        //    }
-
-        //    var token = _jwtHelper.GenerateToken(user);
-        //    return token;
-        //}
-
         public async Task<string?> LoginAsync(string email, string password)
         {
             Console.WriteLine($"🔍 Attempting login for: {email}");
@@ -84,8 +63,6 @@ namespace FeedbackForm.Services.Implementations
         }
 
 
-
-
         public async Task LogoutAsync(Guid userId)
         {
             // Example: Set IsActive = 0 or clear session/token
@@ -109,16 +86,6 @@ namespace FeedbackForm.Services.Implementations
         }
 
 
-
-        //public async Task<User> CreateUserAsync(User user)
-        //{
-        //    user.Id = Guid.NewGuid();
-        //    return await _userRepository.AddAsync(user);
-
-        //}
-
-
-
         public async Task<User> UpdateUserAsync(Guid id, User updatedUser)
         {
             var existingUser = await _userRepository.GetByIdAsync(id);
@@ -133,8 +100,6 @@ namespace FeedbackForm.Services.Implementations
 
         }
 
-
-
         public async Task<bool> DeleteUserAsync(Guid id)
         {
             var existingUser = await _userRepository.GetByIdAsync(id);
@@ -145,12 +110,6 @@ namespace FeedbackForm.Services.Implementations
             _userRepository.Remove(existingUser);
             return true;
         }
-
-        //public async Task<User?> GetUserByEmail(string email)
-        //{
-        //    return await _userRepository.GetQueryable().FirstOrDefaultAsync(u => u.Email == email);
-        //}
-
 
 
     }
