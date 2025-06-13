@@ -1,3 +1,4 @@
+using FeedbackForm.Helper;
 using FeedbackForm.Middlewares;
 using FeedbackForm.Models;
 using FeedbackForm.Repositories.Implementations;
@@ -12,13 +13,14 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IResponseService, ResponseService>();
 builder.Services.AddScoped<IFormRepository, FormRepository>();
+builder.Services.AddScoped<JwtHelper>();
 
 builder.Services.AddCors(options =>
 {

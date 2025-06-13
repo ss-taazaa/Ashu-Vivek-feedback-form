@@ -24,6 +24,12 @@ namespace FeedbackForm.Services.Implementations
 
             if (form == null)
                 throw new Exception("Form not found.");
+
+
+            if (form.Status == Enum.FormStatus.Closed)
+            {
+                throw new Exception("Can not submit the form because it has been closed now");
+            }
             var validOptionIds = form.Questions
                 .SelectMany(q => q.Options)
                 .Select(o => o.Id)

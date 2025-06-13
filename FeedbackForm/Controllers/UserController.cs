@@ -3,9 +3,11 @@ using FeedbackForm.Models;
 using FeedbackForm.Helper; 
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FeedbackForm.Controllers
 {
+    [Authorize]
     [Route("api/users")]
     [ApiController]
     public class UsersController(IUserService _userService) : ControllerBase
@@ -28,6 +30,7 @@ namespace FeedbackForm.Controllers
         }
 
 
+
         [HttpGet("by-email/{email}")]
 
         public async Task<ActionResult<User>> GetUserByEmail(string email)
@@ -41,29 +44,52 @@ namespace FeedbackForm.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserCreateDto dto)
         {
-            if (!Utils.NameValidator(userCreateDto.Name).Success || !Utils.EmailValidator(userCreateDto.Email).Success)
+            var nameValidation = Utils.NameValidator(dto.Name);
+            var emailValidation = Utils.EmailValidator(dto.Email);
+            if (!nameValidation.Success || !emailValidation.Success)
             {
-               return BadRequest("Invalid user data.");
+                return BadRequest("Invalid user data.");
             }
-
             try
             {
-                var checkExistingUser = await _userService.GetUserByEmailAsync(userCreateDto.Email);
-                if(checkExistingUser != null)
-                {
-                    return BadRequest("User with this email already exists.");
-                }
-                var user = new User(userCreateDto);
-                await _userService.CreateUserAsync(user);
-                return Ok("User has been successfully created.");
+                var user = await _userService.RegisterAsync(dto);
+                return Ok(new UserDto(user));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Failed to create user.");
+                return BadRequest(ex.Message);
             }
+        }
+
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
+        {
+            if (!ModelState.IsValid || string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest(new { Message = "Invalid input provided." });
+            }
+            var token = await _userService.LoginAsync(dto.Email, dto.Password);
+            if (token == null)
+            {
+                return BadRequest(new { Message = "Invalid email or password." });
+            }
+            return Ok(new { Token = token });
+        }
+
+
+        [HttpPost("{id}/logout")]
+        public async Task<IActionResult> Logout(Guid id)
+        {
+            if (id == Guid.Empty)
+                return BadRequest("Invalid user ID.");
+
+            await _userService.LogoutAsync(id);
+            return Ok("User logged out.");
         }
 
 
@@ -73,7 +99,7 @@ namespace FeedbackForm.Controllers
             var existingUser = await _userService.GetUserById(id);
             if (existingUser == null)
                 return NotFound();
-            if (!Utils.NameValidator(userCreateDto.Name).Success || Utils.EmailValidator(userCreateDto.Email).Success)
+            if (!Utils.NameValidator(userCreateDto.Name).Success || !Utils.EmailValidator(userCreateDto.Email).Success)
             {
                 return BadRequest("Invalid user data.");
             }
@@ -83,7 +109,6 @@ namespace FeedbackForm.Controllers
             var responseDto = new UserDto(updatedUser);
             return Ok(responseDto);
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)

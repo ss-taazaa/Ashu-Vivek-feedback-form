@@ -18,8 +18,6 @@ namespace FeedbackForm.Repositories.Implementations
             return form;
         }
 
-       
-
         public async Task<bool> UpdateFormQuestionsAsync(Guid formId, List<Question> updatedQuestions)
         {
             var form = await _context.Forms
@@ -63,8 +61,6 @@ namespace FeedbackForm.Repositories.Implementations
             return true;
         }
 
-
-
         public async Task<(List<Form> Items, int TotalCount)> GetFilteredFormsAsync(FormFilterDto filter)
         {
             var query = _context.Forms
@@ -72,30 +68,27 @@ namespace FeedbackForm.Repositories.Implementations
                 .Include(f => f.Questions)
                 .Include(f => f.Submissions)
                 .AsQueryable();
-
             if (!string.IsNullOrEmpty(filter.Title))
                 query = query.Where(f => f.Title.Contains(filter.Title));
-
             if (filter.Status.HasValue)
                 query = query.Where(f => f.Status == (FormStatus)filter.Status.Value);
-
-           
-
             var totalCount = await query.CountAsync();
-
             var forms = await query
                 .OrderByDescending(f => f.CreatedOn)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();
-
             return (forms, totalCount);
         }
+
+
 
 
         public IQueryable<Form> Query()
         {
             return _context.Forms;
         }
+
+
     }
 }

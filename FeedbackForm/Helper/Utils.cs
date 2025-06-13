@@ -45,7 +45,6 @@ namespace FeedbackForm.Helper
             return new ApiResponseDto(true, "Form created successfully");
         }
 
-
         public static ApiResponseDto EmailValidator(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -56,7 +55,6 @@ namespace FeedbackForm.Helper
             else
                 return new ApiResponseDto(false, "Invalid email format.");
         }
-
 
         public static ApiResponseDto NameValidator(string name)
         {

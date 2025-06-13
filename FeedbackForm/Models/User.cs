@@ -10,6 +10,8 @@ namespace FeedbackForm.Models
         public string Email { get; set; }
         public DateTime CreatedOn { get; set; }
         public bool isDeleted { get; set; }
+        public string Password { get; set; } 
+        public bool isActive { get; set; }
         public DateTime? isModified { get; set; } = null;
         public ICollection<Form> Forms { get; set; } = new List<Form>();
 

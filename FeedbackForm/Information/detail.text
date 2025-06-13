@@ -42,3 +42,6 @@ Complex joins or eager loading (e.g., Include(q => q.Options)) need to be handle
   //return await _formRepo.Query()
             //    .Where(f => f.Id == formId)
             //    .FirstOrDefaultAsync();
+
+
+I have made changes on the option and answeroption and questions also
