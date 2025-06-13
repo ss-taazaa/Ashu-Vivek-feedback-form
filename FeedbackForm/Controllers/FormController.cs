@@ -6,7 +6,7 @@ using FeedbackForm.Models;
 using FeedbackForm.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/form")]
 public class FormsController(IFormService _formService, IUserService _userService) : ControllerBase

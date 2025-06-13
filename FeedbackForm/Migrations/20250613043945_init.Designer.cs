@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedbackForm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250612184315_jwt")]
-    partial class jwt
+    [Migration("20250613043945_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

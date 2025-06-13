@@ -13,24 +13,16 @@ namespace FeedbackForm.Services.Implementations
             var existingUser = await _userRepository.GetQueryable().FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             if (existingUser != null)
-            {
                 throw new Exception("User already exists.");
-            }
 
-
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                Name = dto.Name,
-                Email = dto.Email,
-                Password = hashedPassword,
-                CreatedOn = DateTime.UtcNow,
-                IsActive = 1
-            };
+            var user = new User(dto);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password); 
+            user.IsActive = 1; // enforce active
 
             return await _userRepository.AddAsync(user);
         }
+
+
 
         //public async Task<string?> LoginAsync(string email, string password)
         //{

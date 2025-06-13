@@ -17,7 +17,8 @@ namespace FeedbackForm.DTOs
         public FormStatus Status { get; set; }
 
         [Required(ErrorMessage = "UserId is required.")]
-        public Guid UserId { get; set; }
+        //public Guid UserId { get; set; }
+        public string UserEmail { get; set; }
 
         [Required(ErrorMessage = "At least one question is required.")]
         [MinLength(1, ErrorMessage = "At least one question is required.")]

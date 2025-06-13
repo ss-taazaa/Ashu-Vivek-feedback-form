@@ -14,9 +14,9 @@ namespace FeedbackForm.Helper
 
             public JwtHelper(IOptions<JwtSettings> jwtSettings)
             {
+            _jwtSettings = jwtSettings.Value;
             Console.WriteLine("JWT Key Length: " + _jwtSettings.Key.Length);
 
-            _jwtSettings = jwtSettings.Value;
 
             }
 
